@@ -1,29 +1,29 @@
-const { GIFs } = require("../storage/JSON/gifs");
+const { GIFs } = require("../../storage/JSON/gifs");
 
 module.exports = class {
     constructor() {
-        this.cmd = 'slap',
-        this.aliases = ['slapuser']
+        this.cmd = 'kiss',
+        this.aliases = ['mwah']
     }
 
     async run(client, msg, args, options) {
-        let slappedUser = msg.mentions.users.first() || msg.guild.members.cache.get(args[0]);
+        let kissedUser = msg.mentions.users.first() || msg.guild.members.cache.get(args[0]);
 
-        const urls = GIFs.slap;
+        const urls = GIFs.kiss;
         const url = urls[Math.floor(Math.random() * urls.length)];
 
-        if (!slappedUser) {
+        if (!kissedUser || kissedUser == msg.author) {
             msg.channel.send({ embed: {
-                title: `You slapped yourself... Why??`,
+                title: `Did you really just kiss yourself...`,
                 image: {
                     url: url
                 }
             }});
             return;
         }
-        if (slappedUser === client.user) {
+        if (kissedUser === client.user) {
             msg.channel.send({ embed: {
-                title: `Ow! Why'd you slap me, ${msg.author.username}?`,
+                title: `Aww, thanks for the kiss ${msg.author.username} <3`,
                 image: {
                     url: url
                 }
@@ -32,7 +32,7 @@ module.exports = class {
         }
 
         msg.channel.send({ embed: {
-            title: `${msg.author.username} slapped ${slappedUser.username}`,
+            title: `${msg.author.username} kisses ${kissedUser.username}`,
             image: {
                 url: url
             }
