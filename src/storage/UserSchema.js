@@ -22,9 +22,13 @@ const user = Schema({
                     type: Number,
                     default: 0
                 },
-                days: {
-                    type: Obkect,
-                    default: {}
+                todaysWorks: {
+                    type: Number,
+                    default: 0
+                },
+                lastWorkDay: {
+                    type: Date,
+                    default: 0
                 },
                 fires: {
                     type: Object,

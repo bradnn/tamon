@@ -4,7 +4,7 @@ module.exports = class {
     constructor() {
         this.name = `Voice Actor`;
         this.description = `Do voice acting for companies that contract you.`;
-        this.hourRequirement = 1;
+        this.hourRequirement = 0;
         this.salary = 12500;
         this.unlockHours = 0;
     }

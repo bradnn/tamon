@@ -112,10 +112,25 @@ module.exports = class {
     }
 
     canWork() {
+        const lastWorkDay = this.model.profile.commands.work.lastWorkDay;
+        const DAY_LENGTH = 86400000;
         const date = new Date();
-        const dateFormated = date.toISOString().slice(0,10);
-        const yesterday = date.setDate(date.getDate()-1);
-        console.log(date);
+        const timeSince = Math.abs(lastWorkDay - date);
+        if (lastWorkDay.getTime() === 0) {
+            this.model.profile.commands.work.lastWorkDay = date;
+            return true;
+        }
+        if (timeSince >= DAY_LENGTH) {
+            const job = client.jobs.get(this.getJob())
+            this.model.profile.commands.work.todaysWorks = 0;
+            this.model.profile.commands.work.lastWorkDay = date;
+            if (timeSince >= (DAY_LENGTH * 2) || this.model.profile.commands.work.todaysWorks < job.hourRequirement) {
+                this.setJob("None", true);
+                return false;
+            }
+            return true;
+        }
+        return true;
     }
 
     save() {

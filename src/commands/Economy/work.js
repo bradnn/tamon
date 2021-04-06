@@ -127,7 +127,9 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                         }
                         user.setJob(job.name);
                         user.save();
-                        msg.channel.send(`apply function`);
+                        msg.channel.send({
+                            
+                        });
                         break;
                     }
                     msg.channel.send({ embed: {
@@ -147,6 +149,20 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You don't have a job. Apply for one with \`${options.prefix}work <Job Name>\``,
+                        timestamp: Date.now(),
+                        footer: {
+                            text: `${user.user.username}'s work`,
+                            icon_url: user.user.avatarURL()
+                        }, 
+                        color: client.colors.invalid
+                    }});
+                    return;
+                }
+
+                if (!user.canWork()) {
+                    msg.channel.send({ embed: {
+                        title: `❌ Error`,
+                        description: `You didn't meet the required hours yesterday. Apply for a job with \`${options.prefix}work <Job Name>\``,
                         timestamp: Date.now(),
                         footer: {
                             text: `${user.user.username}'s work`,
