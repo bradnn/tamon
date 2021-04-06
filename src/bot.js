@@ -12,8 +12,15 @@ client.logger = require('./modules/Logger'); // DEFINES LOGGER
 
 client.commands = new Collection(); // COMMAND STORAGE
 client.aliases = new Collection(); // ALIASES FOR COMMANDS
+client.jobs = new Collection(); // JOB STORAGE
 client.servers = new Collection(); // GUILD STORAGE
 client.members = new Collection(); // USER STORAGE
+
+client.colors = {
+    default: `#4361ee`,
+    invalid: `#e63946`,
+    success: `#06d6a0`
+}
 
 async function start() {
         // LOADING EVENTS
@@ -40,6 +47,17 @@ async function start() {
                         client.aliases.set(alias, name);
                     }
                 }
+            }
+        });
+
+        // LOADING JOBS
+        glob (`${process.cwd()}/src/storage/jobs/**/*.js`).then(jobs => {
+            for (const jobFile of jobs) {
+                const { name } = parse(jobFile);
+                const file = require(jobFile);
+                const job = new file();
+                client.logger.job(`Loading Job: ${name}`);
+                client.jobs.set(name, job);
             }
         });
 

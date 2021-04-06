@@ -14,12 +14,16 @@ module.exports = class {
             msg.mentions.splice(0,1);
         }
 
+        const options = {
+            prefix: guild.getPrefix()
+        }
+
         const [cmd, ...args] = await msg.content.slice(prefix.length).trim().split(/ +/g);
         const command = client.commands.get(cmd.toLowerCase()) || client.commands.get(client.aliases.get(cmd.toLowerCase()));
         if (command) {
             try {
                 client.logger.command(`Command ${prefix}${cmd} ran by ${msg.author.username}#${msg.author.discriminator} (${msg.author.id})`);
-                command.run(client, msg, args);
+                command.run(client, msg, args, options);
             } catch (e) {
                 msg.channel.send({
                     embed: {

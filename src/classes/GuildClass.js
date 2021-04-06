@@ -1,7 +1,7 @@
 module.exports = class {
-    constructor(user, model) {
-        this.id = user.id;
-        this.user = user;
+    constructor(guild, model) {
+        this.id = guild.id;
+        this.guild = guild;
         this.model = model;
     }
 

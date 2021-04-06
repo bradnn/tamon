@@ -36,6 +36,9 @@ exports.log = (content, type = "log") => {
     case 'command': {
       return console.log(`${timestamp} ${chalk.magentaBright(type.toUpperCase())} ${content} `);
     }
+    case 'job': {
+      return console.log(`${timestamp} ${chalk.blue(type.toUpperCase())} ${content} `);
+    }
     default: throw new TypeError('Invalid logger type');
   }
 };
@@ -57,3 +60,5 @@ exports.load = (...args) => this.log(...args, 'load');
 exports.event = (...args) => this.log(...args, 'event');
 
 exports.command = (...args) => this.log(...args, 'command');
+
+exports.job = (...args) => this.log(...args, 'job');
