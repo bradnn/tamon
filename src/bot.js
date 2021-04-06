@@ -71,14 +71,13 @@ async function start() {
             client.logger.error(`Couldn't connect to the MongoDB database. Error: ${err}`);
         })
 
-        // LOGIN TO BOT
-        client.login(process.env.TOKEN);
+        client.login(process.env.TOKEN); // LOGIN TO BOT
 }
 
-start();
+start(); // Runs start function
 
 module.exports.Client = {
-    get: function () {
+    get: function () { // Returns client for ease of use in other files
         return client;
     }
 }

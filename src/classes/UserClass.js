@@ -125,7 +125,9 @@ module.exports = class {
             this.model.profile.commands.work.todaysWorks = 0;
             this.model.profile.commands.work.lastWorkDay = date;
             if (timeSince >= (DAY_LENGTH * 2) || this.model.profile.commands.work.todaysWorks < job.hourRequirement) {
-                this.setJob("None", true);
+                if (!job.hourRequirement < 1) {
+                    this.setJob("None", true);
+                }
                 return false;
             }
             return true;

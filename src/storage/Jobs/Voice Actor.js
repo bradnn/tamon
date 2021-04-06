@@ -1,4 +1,4 @@
-const messages = [
+const messages = [ // Messages done by Cryptic#3068
     "You got payed %p for reading a super long script!",
     "The trailers racked in %p from your amazing voice.",
     "You voiced for the new Tamon Podcast and got %p.",
@@ -14,18 +14,18 @@ const messages = [
 module.exports = class {
     constructor() {
         this.name = `Voice Actor`;
-        this.description = `Do voice acting for companies that contract you.`;
+        this.description = `Do voice acting for companies that contract you.`; // Description done by sycles#3388
         this.hourRequirement = 0;
         this.salary = 12500;
         this.unlockHours = 0;
     }
     
     getMessage(type = "question") {
-        return messages[Math.floor(Math.random() * messages.length)];
+        return messages[Math.floor(Math.random() * messages.length)]; // Returns random message from array defined at top of file.
     }
 
-    isUnlocked(user) {
-        var workCount = user.getWorkCount();
+    isUnlocked(user) { // Checks if the user can apply for this job
+        const workCount = user.getWorkCount();
         if (workCount >= this.unlockHours) {
             return true;
         }

@@ -2,7 +2,7 @@ const { Guild } = require("../../modules/Guild");
 
 module.exports = class {
     async run(client, msg) {
-        if (msg.channel.type == 1 | msg.author.bot) { return; };
+        if (msg.channel.type == 1 | msg.author.bot) { return; }; // If channel is in dms or user is a bot
 
         const mentionRegex = RegExp(`^<@!?${client.user.id}>$`);
         const mentionRegexPrefix = RegExp(`^<@!?${client.user.id}> `);
