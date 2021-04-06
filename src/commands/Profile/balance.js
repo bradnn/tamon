@@ -8,11 +8,7 @@ module.exports = class {
 
     async run(client, msg, args, options) {
         let user = msg.mentions.users.first() || msg.guild.members.cache.get(args[0]) || msg.author;
-        
         const profile = await User.get(user);
-
-        console.log(profile.canWork());
-
         const embed = {
             author: {
                 name: `${user.username}'s balance`,

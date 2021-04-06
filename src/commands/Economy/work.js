@@ -10,9 +10,6 @@ module.exports = class {
     }
 
     async run(client, msg, args, options) {
-
-        
-
         var user = await User.get(msg.author);
 
         switch (args[0]?.toLowerCase()) {
@@ -126,10 +123,16 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                             break;
                         }
                         user.setJob(job.name);
-                        user.save();
-                        msg.channel.send({
-                            
-                        });
+                        msg.channel.send({ embed: {
+                            title: `${job.name} Application`,
+                            description: `You were accepted as ${job.name}. Your salary is now ${Number.comma(job.salary)} coins.`,
+                            timestamp: Date.now(),
+                            footer: {
+                                text: `${user.user.username}'s application`,
+                                icon_url: user.user.avatarURL()
+                            },
+                            color: client.colors.invalid
+                        }});
                         break;
                     }
                     msg.channel.send({ embed: {
@@ -140,7 +143,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                             text: `${user.user.username}'s work`,
                             icon_url: user.user.avatarURL()
                         }, 
-                        color: client.colors.invalid
+                        color: client.colors.success
                     }});
                     break;
                 }
@@ -156,7 +159,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                         }, 
                         color: client.colors.invalid
                     }});
-                    return;
+                    break;
                 }
 
                 if (!user.canWork()) {
@@ -170,25 +173,62 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                         }, 
                         color: client.colors.invalid
                     }});
-                    return;
+                    break;
                 }
+
+                const job = client.jobs.get(user.getJob());
 
                 const challengeTypes = Object.keys(Challenge);
                 const challengeType = challengeTypes[Math.floor(Math.random() * challengeTypes.length)];
 
-                const results = await Challenge[challengeType](client, msg, user);
-
-                user.setJob("None", true);
-                user.save();
+                const results = await Challenge[challengeType](msg, `${job.name} Work`, `${user.user.username}'s work`);
                 if (results.correct) {
-                    // CHALLENGE COMPLETED CORRECTLY
-                } else {
-                    // CHALLENGE COMPLETED INCORRECTLY OR WASNT COMPLETED
+                    user.addCoins(user.getPay());
+                    msg.channel.send({ embed: {
+                        title: `${job.name} Work`,
+                        description: job.getMessage().replace("%p", Number.comma(user.getPay()) + " coins"),
+                        timestamp: Date.now(),
+                        footer: {
+                            text: `${user.user.username}'s work`,
+                            icon_url: user.user.avatarURL()
+                        },
+                        color: client.colors.success
+                    }});
+                    break;
+                }
+                switch (results.error) {
+                    case "MISTYPE": {
+                        msg.channel.send({ embed: {
+                            title: `${job.name} Work`,
+                            description: `You got it wrong, the word was **\`${results.word}\`**.`,
+                            timestamp: Date.now(),
+                            footer: {
+                                text: `${user.user.username}'s work`,
+                                icon_url: user.user.avatarURL()
+                            },
+                            color: client.colors.invalid
+                        }});
+                        break;
+                    }
+                    case "TIME": {
+                        msg.channel.send({ embed: {
+                            title: `${job.name} Work`,
+                            description: `You took too long, the word was **\`${results.word}\`**.`,
+                            timestamp: Date.now(),
+                            footer: {
+                                text: `${user.user.username}'s work`,
+                                icon_url: user.user.avatarURL()
+                            },
+                            color: client.colors.invalid
+                        }});
+                        break;
+                    }
                 }
                 break;
             }
         }
-
+        
+        user.save();
         return;
 
     }
