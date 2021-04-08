@@ -11,6 +11,11 @@ const messages = [ // Messages done by Cryptic#3068
     "Tamon was awed from listening to you! Tamon even gave you %p!"
 ];
 
+const failMessages = [
+    "Youre voice cracked so much they only paid you %p. The correct answer was %a",
+    "The script was so short they only paid you %p. The correct answer was %a"
+]
+
 module.exports = class {
     constructor() {
         this.name = `Voice Actor`;
@@ -20,8 +25,9 @@ module.exports = class {
         this.unlockHours = 0;
     }
     
-    getMessage(type = "question") {
-        return messages[Math.floor(Math.random() * messages.length)]; // Returns random message from array defined at top of file.
+    getMessage(correct = true) {
+        if (correct) return messages[Math.floor(Math.random() * messages.length)]; // Returns random message from array defined at top of file.
+        return failMessages[Math.floor(Math.random() * failMessages.length)]; // Returns random message from array defined at top of file.
     }
 
     isUnlocked(user) { // Checks if the user can apply for this job

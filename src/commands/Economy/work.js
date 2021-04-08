@@ -83,7 +83,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                         name: `${user.user.username}'s stats`,
                         icon_url: user.user.avatarURL()
                     },
-                    description: `Job: **\`${user.getJob()}\`**\nHours Worked: **\`${user.getWorkCount()}\`**`,
+                    description: `Job: **\`${user.getJob()}\`**\nHours Worked: **\`${user.getWorkCount()}\`**\nAmount Earned: **\`${Number.comma(user.getWorkAmountEarned())} coins\`**`,
                     timestamp: new Date(),
                     color: client.colors.default
                 }});
@@ -185,7 +185,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
 
                 const results = await Challenge[challengeType](msg, `${job.name} Work`, `${user.user.username}'s work`);
                 if (results.correct) {
-                    user.addCoins(user.getPay());
+                    user.addCoins(user.getPay(), "work");
                     msg.channel.send({ embed: {
                         title: `${job.name} Work`,
                         description: job.getMessage().replace("%p", Number.comma(user.getPay()) + " coins"),
@@ -198,11 +198,13 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     }});
                     break;
                 }
+                const payout = Math.floor((user.getPay() / 100) * 50 + (Math.random() * 100));
+                user.addCoins(payout, "work");
                 switch (results.error) {
                     case "MISTYPE": {
                         msg.channel.send({ embed: {
                             title: `${job.name} Work`,
-                            description: `You got it wrong, the word was **\`${results.word}\`**.`,
+                            description: job.getMessage(false).replace("%p", Number.comma(payout) + " coins").replace("%a", results.word),
                             timestamp: Date.now(),
                             footer: {
                                 text: `${user.user.username}'s work`,
@@ -215,7 +217,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     case "TIME": {
                         msg.channel.send({ embed: {
                             title: `${job.name} Work`,
-                            description: `You took too long, the word was **\`${results.word}\`**.`,
+                            description: job.getMessage(false).replace("%p", Number.comma(payout) + " coins").replace("%a", results.word),
                             timestamp: Date.now(),
                             footer: {
                                 text: `${user.user.username}'s work`,

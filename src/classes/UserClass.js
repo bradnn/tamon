@@ -77,6 +77,10 @@ module.exports = class {
         return true;
     }
 
+    getWorkAmountEarned() {
+        return this.model.profile.commands.work.coinsEarned;
+    }
+
     getWorkCount() {
         return this.model.profile.commands.work.count;
     }
