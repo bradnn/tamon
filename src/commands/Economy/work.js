@@ -176,6 +176,8 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     break;
                 }
 
+                if (user.getCooldown("work", true, msg).response) return;
+
                 const job = client.jobs.get(user.getJob());
 
                 const challengeTypes = Object.keys(Challenge);

@@ -1,7 +1,13 @@
 const { Client } = require("../bot");
 const { error } = require("../modules/Logger");
 const { Number } = require("../modules/Number");
+const { String } = require("../modules/String");
+const { Time } = require("../modules/Time");
 const client = Client.get();
+
+cooldowns = {
+    work: 3600000
+}
 
 module.exports = class {
     constructor(user, model) {
@@ -9,6 +15,10 @@ module.exports = class {
         this.user = user;
         this.model = model;
     }
+
+    // ==================================================================================
+    // COIN MANAGEMENT
+    // ==================================================================================
 
     getCoins(format = false) {
         if (format) { return Number.comma(this.model.profile.balance); };
@@ -32,6 +42,10 @@ module.exports = class {
         this.model.profile.balance -= amount;
         return this.model.profile.balance;
     }
+
+    // ==================================================================================
+    // WORK MANAGEMENT
+    // ==================================================================================
 
     getPay() {
         var job = client.jobs.get(this.getJob());
@@ -135,9 +149,60 @@ module.exports = class {
         return true;
     }
 
+    // ==================================================================================
+    // COOLDOWN MANAGEMENT
+    // ==================================================================================
+
+    getCooldown(type, set = true, msg) {
+        const previousTime = this.model.profile.commands.cooldowns[type]; // When command was last used
+        const nowTime = new Date(); // Current Date
+        const timePassed = Math.abs(previousTime - nowTime); // How long its been since the command was used
+
+        var cooldown = cooldowns[type];
+
+        if (timePassed <= cooldown) {
+            const timeLeftMilli = Math.ceil(cooldown - timePassed)
+            const timeLeftSec = (timeLeftMilli / 1000);
+            const timeLeftFormatted = Time.format(timeLeftMilli);
+
+            if (msg) msg.channel.send(this.generateCooldownEmbed(this.user, type, timeLeftFormatted));
+
+            return {
+                response: true,
+                timeLeftSec,
+                timeLeftMilli,
+                timeLeftFormatted,
+                message: `You need to wait ${timeLeftFormatted} before you can use ${type} again.`,
+                embed: this.generateCooldownEmbed(this.user, type, timeLeftFormatted)
+            }
+        }
+
+        if (set) this.model.profile.commands.cooldowns[type] = new Date();
+        return {
+            response: false
+        }
+    }
+
+    generateCooldownEmbed(user, type, remaining) {
+        const embed = {
+            embed: {
+                title: `Slow down ${user.username} ⏱`,
+                description: `You need to wait ${remaining} before you can use ${type} again.`,
+                color: client.colors.invalid
+            }
+        }
+
+        return embed;
+    }
+
+    // ==================================================================================
+    // DB MANAGEMENT
+    // ==================================================================================
+
     save() {
         try {
             this.model.markModified('profile.commands.work.fires');
+            this.model.markModified('profile.commands.cooldowns');
             this.model.save();
         } catch(e) {
             error(`Issue saving model. USER ID = ${this.id}\n${e}`);

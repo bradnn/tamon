@@ -34,6 +34,12 @@ const user = Schema({
                     type: Object,
                     default: {}
                 }
+            },
+            cooldowns: {
+                type: Object,
+                default: {
+                    work: 0
+                }
             }
         }
     }
