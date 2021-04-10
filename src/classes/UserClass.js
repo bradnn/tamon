@@ -6,7 +6,8 @@ const { Time } = require("../modules/Time");
 const client = Client.get();
 
 cooldowns = {
-    work: 3600000
+    work: 3600000,
+    beg: 30000
 }
 
 module.exports = class {
@@ -33,13 +34,29 @@ module.exports = class {
                     this.model.profile.commands.work.coinsEarned += amount;
                     break;
                 }
+                case "beg": {
+                    this.model.profile.commands.beg.coinsEarned += amount;
+                    break;
+                }
+                case "roll": {
+                    this.model.profile.commands.gambling.roll.amountWon += amount;
+                    break;
+                }
             }
         }
         return this.model.profile.balance;
     }
 
-    delCoins(amount = 0) {
+    delCoins(amount = 0, cmd) {
         this.model.profile.balance -= amount;
+        if (cmd) {
+            switch (cmd) {
+                case "roll": {
+                    this.model.profile.commands.gambling.roll.amountLost += amount;
+                    break;
+                }
+            }
+        }
         return this.model.profile.balance;
     }
 
@@ -150,6 +167,59 @@ module.exports = class {
             }
             return true;
         }
+        return true;
+    }
+
+    // ==================================================================================
+    // BEG MANAGEMENT
+    // ==================================================================================
+
+    getBegCount() {
+        return this.model.profile.commands.beg.count;
+    }
+
+    addBegCount(amount = 1) {
+        try {
+            this.model.profile.commands.beg.count += amount;
+        } catch (e) {
+            error(`Issue changing beg count. USER ID = ${this.id}\n${e}`);
+            return false;
+        }
+        return true;
+    }
+
+    getBegAmountEarned() {
+        return this.model.profile.commands.beg.coinsEarned;
+    }
+
+    // ==================================================================================
+    // GAMBLING MANAGEMENT
+    // ==================================================================================
+
+    // ROLL COMMAND
+    getRollAmountWon() {
+        return this.model.profile.commands.gambling.roll.amountWon;
+    }
+
+    getRollAmountLost() {
+        return this.model.profile.commands.gambling.roll.amountLost;
+    }
+
+    getRollWins() {
+        return this.model.profile.commands.gambling.roll.wins;
+    }
+
+    addRollWin(amount = 1) {
+        this.model.profile.commands.gambling.roll.wins += amount;
+        return true;
+    }
+
+    getRollLosses() {
+        return this.model.profile.commands.gambling.roll.losses;
+    }
+
+    addRollLoss(amount = 1) {
+        this.model.profile.commands.gambling.roll.losses += amount;
         return true;
     }
 

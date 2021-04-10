@@ -85,6 +85,9 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     },
                     description: `Job: **\`${user.getJob()}\`**\nHours Worked: **\`${user.getWorkCount()}\`**\nAmount Earned: **\`${Number.comma(user.getWorkAmountEarned())} coins\`**`,
                     timestamp: new Date(),
+                    footer: {
+                        text: `${profile.user.username}'s work stats`
+                    },
                     color: client.colors.default
                 }});
                 break;

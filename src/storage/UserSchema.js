@@ -35,6 +35,36 @@ const user = Schema({
                     default: {}
                 }
             },
+            beg: {
+                count: {
+                    type: Number,
+                    default: 0
+                },
+                coinsEarned: {
+                    type: Number,
+                    default: 0
+                }
+            },
+            gambling: {
+                roll: {
+                    wins: {
+                        type: Number,
+                        default: 0
+                    },
+                    amountWon: {
+                        type: Number,
+                        default: 0
+                    },
+                    losses: {
+                        type: Number,
+                        default: 0
+                    },
+                    amountLost: {
+                        type: Number,
+                        default: 0
+                    }
+                }
+            },
             cooldowns: {
                 type: Object,
                 default: {
