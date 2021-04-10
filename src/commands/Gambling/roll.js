@@ -79,6 +79,20 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
 
+                if (amount > profile.getCoins()) {
+                    msg.channel.send({ embed: {
+                        title: `❌ Error`,
+                        description: `You need to have ${Number.comma(amount)} in your balance to gamble it.`,
+                        timestamp: Date.now(),
+                        footer: {
+                            text: `${user.user.username}'s roll`,
+                            icon_url: user.user.avatarURL()
+                        }, 
+                        color: client.colors.invalid
+                    }});
+                    break;
+                }
+
                 var botRoll = Math.floor(Math.random() * 6) + 1;
                 var theirRoll = Math.floor(Math.random() * 6) + 1;
 
