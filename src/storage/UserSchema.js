@@ -45,6 +45,24 @@ const user = Schema({
                     default: 0
                 }
             },
+            shop: {
+                amountSpent: {
+                    type: Number,
+                    default: 0
+                },
+                amountEarned: {
+                    type: Number,
+                    default: 0
+                },
+                itemsSold: {
+                    type: Number,
+                    default: 0
+                },
+                itemsBought: {
+                    type: Number,
+                    default: 0
+                }
+            },
             gambling: {
                 roll: {
                     wins: {
@@ -71,6 +89,10 @@ const user = Schema({
                     work: 0
                 }
             }
+        },
+        inventory: {
+            type: Object,
+            default: {}
         }
     }
 });

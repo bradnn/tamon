@@ -86,7 +86,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     description: `Job: **\`${user.getJob()}\`**\nHours Worked: **\`${user.getWorkCount()}\`**\nAmount Earned: **\`${Number.comma(user.getWorkAmountEarned())} coins\`**`,
                     timestamp: new Date(),
                     footer: {
-                        text: `${profile.user.username}'s work stats`
+                        text: `${user.user.username}'s work stats`
                     },
                     color: client.colors.default
                 }});
@@ -134,7 +134,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                                 text: `${user.user.username}'s application`,
                                 icon_url: user.user.avatarURL()
                             },
-                            color: client.colors.invalid
+                            color: client.colors.success
                         }});
                         break;
                     }

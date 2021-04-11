@@ -42,6 +42,10 @@ module.exports = class {
                     this.model.profile.commands.gambling.roll.amountWon += amount;
                     break;
                 }
+                case "sell": {
+                    this.model.profile.commands.shop.amountEarned += amount;
+                    break;
+                }
             }
         }
         return this.model.profile.balance;
@@ -53,6 +57,10 @@ module.exports = class {
             switch (cmd) {
                 case "roll": {
                     this.model.profile.commands.gambling.roll.amountLost += amount;
+                    break;
+                }
+                case "buy": {
+                    this.model.profile.commands.shop.amountSpent += amount;
                     break;
                 }
             }
@@ -224,6 +232,100 @@ module.exports = class {
     }
 
     // ==================================================================================
+    // INVENTORY MANAGEMENT
+    // ==================================================================================
+
+    addItem(item, amount = 1) {
+        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
+        if (!this.model.profile.inventory[item.category]) {
+            this.model.profile.inventory[item.category] = {};
+        }
+        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
+        if (!this.model.profile.inventory[item.category][item.name]) {
+            this.model.profile.inventory[item.category][item.name] = 0;
+        }
+        // ADD THE ITEM TO THE USER
+        this.model.profile.inventory[item.category][item.name] += amount;
+        return;
+    }
+
+    delItem(item, amount = 1) {
+        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
+        if (!this.model.profile.inventory[item.category]) {
+            this.model.profile.inventory[item.category] = {};
+        }
+        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
+        if (!this.model.profile.inventory[item.category][item.name]) {
+            this.model.profile.inventory[item.category][item.name] = 0;
+            return false;
+        }
+        // REMOVE THE ITEM FROM THE USER
+        this.model.profile.inventory[item.category][item.name] -= amount;
+        return;
+    }
+
+    getItemCount(item) {
+        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
+        if (!this.model.profile.inventory[item.category]) {
+            this.model.profile.inventory[item.category] = {};
+        }
+        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
+        if (!this.model.profile.inventory[item.category][item.name]) {
+            this.model.profile.inventory[item.category][item.name] = 0;
+            return 0;
+        }
+        // RETURN THE AMOUNT THE USER HAS
+        return this.model.profile.inventory[item.category][item.name];
+    }
+
+    getTotalItemCount() {
+        var count = 0;
+        
+        for (var category in this.model.profile.inventory) {
+            for (var item in this.model.profile.inventory[category]) {
+                count += this.model.profile.inventory[category][item];
+            }
+        }
+        return count;
+    }
+
+    getTotalItemWorth() {
+        var count = 0;
+        
+        for (var category in this.model.profile.inventory) {
+            for (var item in this.model.profile.inventory[category]) {
+                item = client.items.get(item.toLowerCase());
+                if (item.price.worth) {
+                    count += item.price.worth;
+                }
+            }
+        }
+        return count;
+    }
+
+    // ==================================================================================
+    // SHOP MANAGEMENT
+    // ==================================================================================
+
+    getShopItemsBought() {
+        return this.model.profile.commands.shop.itemsBought;
+    }
+
+    addShopItemsBought(amount = 0) {
+        this.model.profile.commands.shop.itemsBought += amount;
+        return;
+    }
+
+    getShopItemsSold() {
+        return this.model.profile.commands.shop.itemsSold;
+    }
+
+    addShopItemsSold(amount = 0) {
+        this.model.profile.commands.shop.itemsSold += amount;
+        return;
+    }
+
+    // ==================================================================================
     // COOLDOWN MANAGEMENT
     // ==================================================================================
 
@@ -277,6 +379,7 @@ module.exports = class {
         try {
             this.model.markModified('profile.commands.work.fires');
             this.model.markModified('profile.commands.cooldowns');
+            this.model.markModified('profile.inventory');
             this.model.save();
         } catch(e) {
             error(`Issue saving model. USER ID = ${this.id}\n${e}`);

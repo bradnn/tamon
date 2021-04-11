@@ -3,8 +3,8 @@ const { User } = require("../../modules/User");
 
 module.exports = class {
     constructor() {
-        this.cmd = 'beg',
-        this.aliases = ['plsgivemoney', 'needmoners', 'GIBMONERS']
+        this.cmd = 'roll',
+        this.aliases = ['dice']
     }
 
     async run(client, msg, args, options) {
@@ -57,8 +57,8 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                         description: `You didn't provide a valid amount to gamble! Do \`${options.prefix}roll <Amount to gamble>\`.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${user.user.username}'s roll`,
-                            icon_url: user.user.avatarURL()
+                            text: `${profile.user.username}'s roll`,
+                            icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
                     }});
@@ -71,8 +71,8 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                         description: `You didn't provide a valid amount to gamble! You have to gamble an amount greater than 0.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${user.user.username}'s roll`,
-                            icon_url: user.user.avatarURL()
+                            text: `${profile.user.username}'s roll`,
+                            icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
                     }});
@@ -85,8 +85,8 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                         description: `You need to have ${Number.comma(amount)} in your balance to gamble it.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${user.user.username}'s roll`,
-                            icon_url: user.user.avatarURL()
+                            text: `${profile.user.username}'s roll`,
+                            icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
                     }});

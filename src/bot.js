@@ -13,6 +13,8 @@ client.logger = require('./modules/Logger'); // DEFINES LOGGER
 client.commands = new Collection(); // COMMAND STORAGE
 client.aliases = new Collection(); // ALIASES FOR COMMANDS
 client.jobs = new Collection(); // JOB STORAGE
+client.items = new Collection(); // ITEM STORAGE
+client.itemAliases = new Collection(); // ALIASES FOR COMMANDS
 client.servers = new Collection(); // GUILD STORAGE
 client.members = new Collection(); // USER STORAGE
 
@@ -50,8 +52,24 @@ async function start() {
             }
         });
 
+        // LOADING ITEMS
+        glob (`${process.cwd()}/src/storage/Items/**/*.js`).then(items => {
+            for (const itemFile of items) {
+                const { name } = parse(itemFile);
+                const file = require(itemFile);
+                const item = new file();
+                const itemName = item.name.toLowerCase();
+                client.logger.item(`Loading Item: ${name}`);
+                client.items.set(itemName, item);
+                for (var alias in item.aliases) {
+                    alias = item.aliases[alias];
+                    client.itemAliases.set(alias, itemName);
+                }
+            }
+        });
+
         // LOADING JOBS
-        glob (`${process.cwd()}/src/storage/jobs/**/*.js`).then(jobs => {
+        glob (`${process.cwd()}/src/storage/Jobs/**/*.js`).then(jobs => {
             for (const jobFile of jobs) {
                 const { name } = parse(jobFile);
                 const file = require(jobFile);

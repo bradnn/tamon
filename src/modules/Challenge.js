@@ -5,6 +5,55 @@ const { String } = require("./String");
 const client = Client.get();
 
 module.exports.Challenge = {
+    unscramble: async function (msg, title, footer) {
+        const word = words[Math.floor(Math.random() * words.length)]; // Gets a random word
+        var scrambledWord = word.split('').sort(function(){return 0.5-Math.random()}).join(''); // Scrambles the word
+        while (word === scrambledWord) { // If the scrambled word happened to be the original word
+            scrambledWord = word.split('').sort(function(){return 0.5-Math.random()}).join(''); // scramble the word again
+        }
+        const filter = response => { // Filter to make sure its the right user responding
+            return response.author.id === msg.author.id;
+        }
+
+        var response;
+        
+        await msg.channel.send({ embed: { // Send message to user with the scrambled word.
+            title: title,
+            description: `The following word is scrambled, unscramble the word to earn some coins:\n**\`${scrambledWord}\`**`,
+            timestamp: Date.now(),
+            footer: {
+                text: footer,
+                icon_url: msg.author.avatarURL()
+            },
+            color: client.colors.default
+        }})
+        .then(async () => {
+            await msg.channel.awaitMessages(filter, {max: 1, time: 30000, errors: ['time']}) // Await for message from that user
+            .then(collected => {
+                if (String.capitalize(collected.first().content.toLowerCase()) == word) { // If the word the user typed matches the original word
+                    response = { // Return correct
+                        correct: true, 
+                        word
+                    }
+                } else { // If not return incorrect
+                    response = {
+                        correct: false,
+                        word,
+                        error: "MISTYPE"
+                    }
+                }
+            })
+            .catch(collected => { // If they didn't respond return incorrect with error TIME
+                response = {
+                    correct: false,
+                    word,
+                    error: "TIME"
+                }
+            });
+        });
+
+        return response; // Send response
+    },
     reverse: async function (msg, title, footer) {
         const word = words[Math.floor(Math.random() * words.length)]; // Gets a random word
         const reversedWord = word.split("").reverse().join(""); // Reverse the word
