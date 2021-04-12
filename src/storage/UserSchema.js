@@ -45,6 +45,20 @@ const user = Schema({
                     default: 0
                 }
             },
+            fish: {
+                rodUses: {
+                    type: Number,
+                    default: 0
+                },
+                count: {
+                    type: Number,
+                    default: 0
+                },
+                fishCaught: {
+                    type: Object,
+                    default: {}
+                }
+            },
             shop: {
                 amountSpent: {
                     type: Number,

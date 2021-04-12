@@ -7,6 +7,7 @@ const client = Client.get();
 
 cooldowns = {
     work: 3600000,
+    fish: 120000,
     beg: 30000
 }
 
@@ -326,6 +327,40 @@ module.exports = class {
     }
 
     // ==================================================================================
+    // SHOP MANAGEMENT
+    // ==================================================================================
+
+    getFishCaught(fish) {
+        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
+        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
+        if (!this.model.profile.commands.fish.fishCaught[fish.name]) {
+            this.model.profile.commands.fish.fishCaught[fish.name] = 0;
+            return 0;
+        }
+        // RETURN THE AMOUNT THE USER HAS
+        return this.model.profile.commands.fish.fishCaught[fish.name];
+    }
+
+    addFishCaught(fish, amount = 1) {
+        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
+        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
+        if (!this.model.profile.commands.fish.fishCaught[fish.name]) {
+            this.model.profile.commands.fish.fishCaught[fish.name] = 0;
+        }
+        // RETURN THE AMOUNT THE USER HAS
+        return this.model.profile.commands.fish.fishCaught[fish.name] += amount;
+    }
+
+    getTimesFished() {
+        return this.model.profile.commands.fish.count;
+    }
+
+    addTimesFished(amount = 1) {
+        this.model.profile.commands.fish.rodUses += amount;
+        return this.model.profile.commands.fish.count += amount;
+    }
+
+    // ==================================================================================
     // COOLDOWN MANAGEMENT
     // ==================================================================================
 
@@ -378,6 +413,7 @@ module.exports = class {
     save() {
         try {
             this.model.markModified('profile.commands.work.fires');
+            this.model.markModified('profile.commands.fish.fishCaught');
             this.model.markModified('profile.commands.cooldowns');
             this.model.markModified('profile.inventory');
             this.model.save();

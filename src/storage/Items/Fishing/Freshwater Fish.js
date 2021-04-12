@@ -1,17 +1,17 @@
 module.exports = class {
     constructor() {
-        this.name = `Tropical Fish`;
-        this.emoji = `🐠`;
+        this.name = `Freshwater Fish`;
+        this.emoji = `🐟`;
         this.description = `A fish found from fishing! *(duh)*`;
         this.category = `Fishing`;
-        this.tier = `uncommon`;
+        this.tier = `common`;
 
         this.display = false
 
         this.price = {
             buy: false,
-            sell: 200,
-            worth: 200
+            sell: 50,
+            worth: 50
         }
 
         this.maxAmount = 0;
