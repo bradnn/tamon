@@ -41,10 +41,25 @@ module.exports = class {
                 }
                 case "roll": {
                     this.model.profile.commands.gambling.roll.amountWon += amount;
+                    if (this.getRollLargestWin() < amount) {
+                        this.setRollLargestWin(amount);
+                    }
+                    break;
+                }
+                case "flip": {
+                    this.model.profile.commands.gambling.flip.amountWon += amount;
+                    if (this.getFlipLargestWin() < amount) {
+                        this.setFlipLargestWin(amount);
+                    }
                     break;
                 }
                 case "sell": {
                     this.model.profile.commands.shop.amountEarned += amount;
+                    break;
+                }
+                case "pay": {
+                    this.model.profile.commands.pay.transactionLimit += amount;
+                    this.model.profile.commands.pay.totalReceived += amount;
                     break;
                 }
             }
@@ -58,10 +73,25 @@ module.exports = class {
             switch (cmd) {
                 case "roll": {
                     this.model.profile.commands.gambling.roll.amountLost += amount;
+                    if (this.getRollLargestLoss() < amount) {
+                        this.setRollLargestLoss(amount);
+                    }
+                    break;
+                }
+                case "flip": {
+                    this.model.profile.commands.gambling.flip.amountLost += amount;
+                    if (this.getFlipLargestLoss() < amount) {
+                        this.setFlipLargestLoss(amount);
+                    }
                     break;
                 }
                 case "buy": {
                     this.model.profile.commands.shop.amountSpent += amount;
+                    break;
+                }
+                case "pay": {
+                    this.model.profile.commands.pay.transactionLimit += amount;
+                    this.model.profile.commands.pay.totalSent += amount;
                     break;
                 }
             }
@@ -171,8 +201,9 @@ module.exports = class {
             if (timeSince >= (DAY_LENGTH * 2) || this.model.profile.commands.work.todaysWorks < job.hourRequirement) {
                 if (!job.hourRequirement < 1) {
                     this.setJob("None", true);
+                    return false;
                 }
-                return false;
+                return true;
             }
             return true;
         }
@@ -230,6 +261,69 @@ module.exports = class {
     addRollLoss(amount = 1) {
         this.model.profile.commands.gambling.roll.losses += amount;
         return true;
+    }
+
+    setRollLargestWin(amount = 1) {
+        this.model.profile.commands.gambling.roll.largestWin = amount;
+        return true;
+    }
+
+    getRollLargestWin() {
+        return this.model.profile.commands.gambling.roll.largestWin;
+    }
+
+    setRollLargestLoss(amount = 1) {
+        this.model.profile.commands.gambling.roll.largestLoss = amount;
+        return true;
+    }
+
+    getRollLargestLoss() {
+        return this.model.profile.commands.gambling.roll.largestLoss;
+    }
+
+    // FLIP COMMAND
+    getFlipAmountWon() {
+        return this.model.profile.commands.gambling.flip.amountWon;
+    }
+    
+    getFlipAmountLost() {
+        return this.model.profile.commands.gambling.flip.amountLost;
+    }
+
+    getFlipWins() {
+        return this.model.profile.commands.gambling.flip.wins;
+    }
+
+    addFlipWin(amount = 1) {
+        this.model.profile.commands.gambling.flip.wins += amount;
+        return true;
+    }
+
+    getFlipLosses() {
+        return this.model.profile.commands.gambling.flip.losses;
+    }
+
+    addFlipLoss(amount = 1) {
+        this.model.profile.commands.gambling.flip.losses += amount;
+        return true;
+    }
+
+    setFlipLargestWin(amount = 1) {
+        this.model.profile.commands.gambling.flip.largestWin = amount;
+        return true;
+    }
+
+    getFlipLargestWin() {
+        return this.model.profile.commands.gambling.flip.largestWin;
+    }
+
+    setFlipLargestLoss(amount = 1) {
+        this.model.profile.commands.gambling.flip.largestLoss = amount;
+        return true;
+    }
+
+    getFlipLargestLoss() {
+        return this.model.profile.commands.gambling.flip.largestLoss;
     }
 
     // ==================================================================================
@@ -327,7 +421,7 @@ module.exports = class {
     }
 
     // ==================================================================================
-    // SHOP MANAGEMENT
+    // FISHING MANAGEMENT
     // ==================================================================================
 
     getFishCaught(fish) {
@@ -358,6 +452,48 @@ module.exports = class {
     addTimesFished(amount = 1) {
         this.model.profile.commands.fish.rodUses += amount;
         return this.model.profile.commands.fish.count += amount;
+    }
+
+    // ==================================================================================
+    // PAY MANAGEMENT
+    // ==================================================================================
+
+    canPay(amount) {
+        const USER_LIMIT = 500000;
+        const previousPay = this.model.profile.commands.pay.limitDate;
+        const time = new Date();
+        const timePassed = Math.abs(previousPay - time);
+        if (this.model.profile.commands.pay.transactionLimit + amount > USER_LIMIT) {
+            if (timePassed > 86400000) {
+                this.model.profile.commands.pay.limitDate = time;
+                this.model.profile.commands.pay.transactionLimit = 0
+                return {
+                    canPay: true,
+                    limit: USER_LIMIT
+                }
+            }
+            return {
+                canPay: false,
+                limit: USER_LIMIT
+            }
+        }
+        if (timePassed > 86400000) {
+            this.model.profile.commands.pay.limitDate = time;
+            this.model.profile.commands.pay.transactionLimit = 0
+        }
+
+        return {
+            canPay: true,
+            limit: USER_LIMIT
+        }
+    }
+
+    getPaySent() {
+        return this.model.profile.commands.pay.totalSent;
+    }
+
+    getPayRecieved() {
+        return this.model.profile.commands.pay.totalReceived;
     }
 
     // ==================================================================================

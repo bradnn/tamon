@@ -3,8 +3,8 @@ const { User } = require("../../modules/User");
 
 module.exports = class {
     constructor() {
-        this.cmd = 'roll',
-        this.aliases = ['dice']
+        this.cmd = 'pay',
+        this.aliases = ['transfer']
     }
 
     async run(client, msg, args, options) {
@@ -19,76 +19,88 @@ module.exports = class {
                 if (user) {
                     profile = await User.get(user);
                 }
-
-                const WIN_AMOUNT = profile.getRollAmountWon();
-                const LOSS_AMOUNT = profile.getRollAmountLost();
-                const TOTAL_PROFIT = WIN_AMOUNT - LOSS_AMOUNT;
-
-                const WINS = profile.getRollWins();
-                const LOSSES = profile.getRollLosses();
-                const TOTAL_ROLLS = WINS + LOSSES;
-
                 msg.channel.send({ embed: { 
                     author: { 
                         name: `${profile.user.username}'s stats`,
                         icon_url: profile.user.avatarURL()
                     },
-                    description: `Times rolled: **\`${Number.comma(TOTAL_ROLLS)}\`**
-Rolls won: **\`${Number.comma(WINS)}\`**
-Rolls lost: **\`${Number.comma(LOSSES)}\`**
-
-Largest win: **\`${Number.comma(profile.getRollLargestWin())}\`**
-Largest loss: **\`${Number.comma(profile.getRollLargestLoss())}\`**
-
-Amount won: **\`${Number.comma(WIN_AMOUNT)} coins\`**
-Amount lost: **\`${Number.comma(LOSS_AMOUNT)} coins\`**
-Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
+                    description: `Amount Sent: **\`${Number.comma(profile.getPaySent())}\`**
+Amount Recieved: **\`${Number.comma(profile.getPayRecieved())}\`**
+Amount Profited: **\`${Number.comma(profile.getPayRecieved() - profile.getPaySent())}\`**`,
                     timestamp: new Date(),
                     footer: {
-                        text: `${profile.user.username}'s rolling stats`
+                        text: `${profile.user.username}'s pay stats`
                     },
                     color: client.colors.default
                 }})
                 break;
             }
             default: {
-                const amount = parseInt(args[0]);
-
-                if (!amount || isNaN(amount)) {
+                const user2 = msg.mentions.users.first() || msg.guild.members.cache.get(args[1]);
+                if (!user2) { 
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
-                        description: `You didn't provide a valid amount to gamble! Do \`${options.prefix}roll <Amount to gamble>\`.`,
+                        description: `You need to provide a valid user to pay. \`${options.prefix}pay <user> <amount>\``,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${profile.user.username}'s roll`,
+                            text: `${profile.user.username}'s payment`,
                             icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
                     }});
                     break;
                 }
+                const amount = parseInt(args[1]);
 
-                if (amount < 0) {
+                if (!amount || isNaN(amount) || amount < 0) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
-                        description: `You didn't provide a valid amount to gamble! You have to gamble an amount greater than 0.`,
+                        description: `You need to provide a valid number to pay. \`${options.prefix}pay <user> <amount>\``,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${profile.user.username}'s roll`,
+                            text: `${profile.user.username}'s payment`,
                             icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
                     }});
                     break;
                 }
-
                 if (amount > profile.getCoins()) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
-                        description: `You need to have ${Number.comma(amount)} in your balance to gamble it.`,
+                        description: `You don't have ${Number.comma(amount)} coins to pay.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${profile.user.username}'s roll`,
+                            text: `${profile.user.username}'s payment`,
+                            icon_url: profile.user.avatarURL()
+                        }, 
+                        color: client.colors.invalid
+                    }});
+                    break;
+                }
+                const canProfilePay = profile.canPay(amount);
+                if (!canProfilePay.canPay) { 
+                    msg.channel.send({ embed: {
+                        title: `❌ Error`,
+                        description: `Paying ${Number.comma(amount)} coins would exceed your transaction limit of ${Number.comma(canProfilePay.limit)}.`,
+                        timestamp: Date.now(),
+                        footer: {
+                            text: `${profile.user.username}'s payment`,
+                            icon_url: profile.user.avatarURL()
+                        }, 
+                        color: client.colors.invalid
+                    }});
+                    break;
+                }
+                var profile2 = await User.get(user2);
+                const canProfile2Pay = profile2.canPay(amount);
+                if (!canProfile2Pay.canPay) { 
+                    msg.channel.send({ embed: {
+                        title: `❌ Error`,
+                        description: `Recieving ${Number.comma(amount)} coins would exceed their transaction limit of ${Number.comma(canProfile2Pay.limit)}.`,
+                        timestamp: Date.now(),
+                        footer: {
+                            text: `${profile.user.username}'s payment`,
                             icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
@@ -96,36 +108,15 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
 
-                var botRoll = Math.floor(Math.random() * 6) + 1;
-                var theirRoll = Math.floor(Math.random() * 6) + 1;
-
-                while (botRoll === theirRoll) {
-                    botRoll = Math.floor(Math.random() * 6) + 1;
-                };
-
-                if(botRoll > theirRoll) {
-                    profile.delCoins(amount, "roll");
-                    profile.addRollLoss();
-                    msg.channel.send({ embed: {
-                        title: `${profile.user.username} Roll`,
-                        description: `You rolled a ${theirRoll} and I rolled a ${botRoll}. You lost ${Number.comma(amount)} coins.`,
-                        timestamp: Date.now(),
-                        footer: {
-                            text: `${profile.user.username}'s roll`,
-                            icon_url: profile.user.avatarURL()
-                        },
-                        color: client.colors.invalid
-                    }});
-                    break;
-                }
-                profile.addCoins(amount, "roll");
-                profile.addRollWin();
+                profile2.addCoins(amount, "pay");
+                profile.delCoins(amount, "pay");
+                profile2.save();
                 msg.channel.send({ embed: {
-                    title: `${profile.user.username} Roll`,
-                    description: `You rolled a ${theirRoll} and I rolled a ${botRoll}. You won ${Number.comma(amount)} coins!`,
+                    title: `${profile.user.username}'s Payment`,
+                    description: `You have sent ${Number.comma(amount)} coins to ${profile2.user.username}!`,
                     timestamp: Date.now(),
                     footer: {
-                        text: `${profile.user.username}'s roll`,
+                        text: `${profile.user.username}'s payment`,
                         icon_url: profile.user.avatarURL()
                     },
                     color: client.colors.success

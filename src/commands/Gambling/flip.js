@@ -3,8 +3,8 @@ const { User } = require("../../modules/User");
 
 module.exports = class {
     constructor() {
-        this.cmd = 'roll',
-        this.aliases = ['dice']
+        this.cmd = 'flip',
+        this.aliases = ['5050']
     }
 
     async run(client, msg, args, options) {
@@ -20,32 +20,32 @@ module.exports = class {
                     profile = await User.get(user);
                 }
 
-                const WIN_AMOUNT = profile.getRollAmountWon();
-                const LOSS_AMOUNT = profile.getRollAmountLost();
+                const WIN_AMOUNT = profile.getFlipAmountWon();
+                const LOSS_AMOUNT = profile.getFlipAmountLost();
                 const TOTAL_PROFIT = WIN_AMOUNT - LOSS_AMOUNT;
 
-                const WINS = profile.getRollWins();
-                const LOSSES = profile.getRollLosses();
-                const TOTAL_ROLLS = WINS + LOSSES;
+                const WINS = profile.getFlipWins();
+                const LOSSES = profile.getFlipLosses();
+                const TOTAL_FLIPS = WINS + LOSSES;
 
                 msg.channel.send({ embed: { 
                     author: { 
                         name: `${profile.user.username}'s stats`,
                         icon_url: profile.user.avatarURL()
                     },
-                    description: `Times rolled: **\`${Number.comma(TOTAL_ROLLS)}\`**
-Rolls won: **\`${Number.comma(WINS)}\`**
-Rolls lost: **\`${Number.comma(LOSSES)}\`**
+                    description: `Times flipped: **\`${Number.comma(TOTAL_FLIPS)}\`**
+Flips won: **\`${Number.comma(WINS)}\`**
+Flips lost: **\`${Number.comma(LOSSES)}\`**
 
-Largest win: **\`${Number.comma(profile.getRollLargestWin())}\`**
-Largest loss: **\`${Number.comma(profile.getRollLargestLoss())}\`**
+Largest win: **\`${Number.comma(profile.getFlipLargestWin())}\`**
+Largest loss: **\`${Number.comma(profile.getFlipLargestLoss())}\`**
 
 Amount won: **\`${Number.comma(WIN_AMOUNT)} coins\`**
 Amount lost: **\`${Number.comma(LOSS_AMOUNT)} coins\`**
 Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     timestamp: new Date(),
                     footer: {
-                        text: `${profile.user.username}'s rolling stats`
+                        text: `${profile.user.username}'s flip stats`
                     },
                     color: client.colors.default
                 }})
@@ -53,14 +53,15 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
             }
             default: {
                 const amount = parseInt(args[0]);
+                var choice = args[1]?.toLowerCase();
 
                 if (!amount || isNaN(amount)) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
-                        description: `You didn't provide a valid amount to gamble! Do \`${options.prefix}roll <Amount to gamble>\`.`,
+                        description: `You didn't provide a valid amount to gamble! Do \`${options.prefix}flip <Amount to gamble> <Heads | Tails>\`.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${profile.user.username}'s roll`,
+                            text: `${profile.user.username}'s flip`,
                             icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
@@ -74,7 +75,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                         description: `You didn't provide a valid amount to gamble! You have to gamble an amount greater than 0.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${profile.user.username}'s roll`,
+                            text: `${profile.user.username}'s flip`,
                             icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
@@ -88,7 +89,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                         description: `You need to have ${Number.comma(amount)} in your balance to gamble it.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${profile.user.username}'s roll`,
+                            text: `${profile.user.username}'s flip`,
                             icon_url: profile.user.avatarURL()
                         }, 
                         color: client.colors.invalid
@@ -96,36 +97,35 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
 
-                var botRoll = Math.floor(Math.random() * 6) + 1;
-                var theirRoll = Math.floor(Math.random() * 6) + 1;
+                if(!choice) { 
+                    choice = "tails"
+                }
 
-                while (botRoll === theirRoll) {
-                    botRoll = Math.floor(Math.random() * 6) + 1;
-                };
-
-                if(botRoll > theirRoll) {
-                    profile.delCoins(amount, "roll");
-                    profile.addRollLoss();
+                const results = ["tails", "heads"];
+                const result = results[Math.floor(Math.random() * results.length)];
+                if(choice !== result) {
+                    profile.delCoins(amount, "flip");
+                    profile.addFlipLoss();
                     msg.channel.send({ embed: {
-                        title: `${profile.user.username} Roll`,
-                        description: `You rolled a ${theirRoll} and I rolled a ${botRoll}. You lost ${Number.comma(amount)} coins.`,
+                        title: `${profile.user.username} Flip`,
+                        description: `You flipped ${result} and lost ${Number.comma(amount)} coins.`,
                         timestamp: Date.now(),
                         footer: {
-                            text: `${profile.user.username}'s roll`,
+                            text: `${profile.user.username}'s flip`,
                             icon_url: profile.user.avatarURL()
                         },
                         color: client.colors.invalid
                     }});
                     break;
                 }
-                profile.addCoins(amount, "roll");
-                profile.addRollWin();
+                profile.addCoins(amount, "flip");
+                profile.addFlipLoss();
                 msg.channel.send({ embed: {
-                    title: `${profile.user.username} Roll`,
-                    description: `You rolled a ${theirRoll} and I rolled a ${botRoll}. You won ${Number.comma(amount)} coins!`,
+                    title: `${profile.user.username} Flip`,
+                    description: `You flipped ${result} and won ${Number.comma(amount)} coins!`,
                     timestamp: Date.now(),
                     footer: {
-                        text: `${profile.user.username}'s roll`,
+                        text: `${profile.user.username}'s flip`,
                         icon_url: profile.user.avatarURL()
                     },
                     color: client.colors.success

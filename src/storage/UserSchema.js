@@ -77,6 +77,24 @@ const user = Schema({
                     default: 0
                 }
             },
+            pay: {
+                transactionLimit: {
+                    type: Number,
+                    default: 0
+                },
+                limitDate: {
+                    type: Date,
+                    default: 0
+                },
+                totalSent: {
+                    type: Number,
+                    default: 0
+                },
+                totalReceived: {
+                    type: Number,
+                    default: 0
+                }
+            },
             gambling: {
                 roll: {
                     wins: {
@@ -92,6 +110,40 @@ const user = Schema({
                         default: 0
                     },
                     amountLost: {
+                        type: Number,
+                        default: 0
+                    },
+                    largestWin: {
+                        type: Number,
+                        default: 0
+                    },
+                    largestLoss: {
+                        type: Number,
+                        default: 0
+                    }
+                },
+                flip: {
+                    wins: {
+                        type: Number,
+                        default: 0
+                    },
+                    amountWon: {
+                        type: Number,
+                        default: 0
+                    },
+                    losses: {
+                        type: Number,
+                        default: 0
+                    },
+                    amountLost: {
+                        type: Number,
+                        default: 0
+                    },
+                    largestWin: {
+                        type: Number,
+                        default: 0
+                    },
+                    largestLoss: {
                         type: Number,
                         default: 0
                     }

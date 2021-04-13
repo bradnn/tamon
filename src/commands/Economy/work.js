@@ -189,6 +189,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                 const results = await Challenge[challengeType](msg, `${job.name} Work`, `${user.user.username}'s work`);
                 if (results.correct) {
                     user.addCoins(user.getPay(), "work");
+                    user.addWorkCount();
                     msg.channel.send({ embed: {
                         title: `${job.name} Work`,
                         description: job.getMessage().replace("%p", Number.comma(user.getPay()) + " coins"),

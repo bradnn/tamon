@@ -9,14 +9,41 @@ module.exports = class {
     }
 
     async run(client, msg, args, options) {
-        let author = msg.mentions.users.first() || msg.guild.members.cache.get(args[0]) || msg.author;
-        const user = await User.get(author);
+        let author = msg.author;
+        var user = await User.get(author);
 
         switch(args[0]?.toLowerCase()) {
+            case "stats":
+            case "view":
+            case "info": {
+                let user2 = msg.mentions.users.first() || msg.guild.members.cache.get(args[0]);
+                if (user2) {
+                    user = await User.get(user2);
+                }
+                msg.channel.send({ embed: {
+                    author: {
+                        name: `${user.user.username}'s stats`,
+                        icon_url: user.user.avatarURL()
+                    },
+                    description: `Times Fished: **\`${user.getTimesFished()}\`**`,
+                    timestamp: new Date(),
+                    footer: {
+                        text: `${user.user.username}'s fishing stats`
+                    },
+                    color: client.colors.default
+                }});
+                break;
+            }
             case "inven":
             case "net":
             case "inventory":
             case "bag": {
+
+                const user2 = msg.mentions.users.first() || msg.guild.members.cache.get(args[0]);
+                if (user2) {
+                    user = await User.get(user2);
+                }
+
                 const fishObj = {
                     freshwaterItem: client.items.get(`freshwater fish`),
                     blowfishItem: client.items.get(`blowfish`),
@@ -43,9 +70,8 @@ Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.pric
                     description: fishString,
                     timestamp: new Date(),
                     color: client.colors.default
-                }})
-
-
+                }});
+                break;
             }
             default: {
                 const rodItem = client.items.get(`fishing rod`);
@@ -65,7 +91,52 @@ Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.pric
 
                 if (user.getCooldown("fish", true, msg).response) return;
 
+                var amount;
+                var type;
+
+                const chance = Math.ceil(Math.random() * 100);
+
+                if (chance > 99) { // PENGUIN
+                    type = client.items.get(`penguin`);
+                    amount = Math.floor(Math.random() * 3) + 1;
+                } else if (chance > 95) { // WHALE
+                    type = client.items.get(`whale`);
+                    amount = Math.floor(Math.random() * 5) + 3;
+                } else if (chance > 90) { // SHARK
+                    type = client.items.get(`shark`);
+                    amount = Math.floor(Math.random() * 7) + 5;
+                } else if (chance > 85) { // OCTOPUS
+                    type = client.items.get(`octopus`);
+                    amount = Math.floor(Math.random() * 10) + 7;
+                } else if (chance > 80) { // TROPICAL FISH
+                    type = client.items.get(`tropical fish`);
+                    amount = Math.floor(Math.random() * 15) + 10;
+                } else if (chance > 70) { // BLOWFISH
+                    type = client.items.get(`blowfish`);
+                    amount = Math.floor(Math.random() * 17) + 10;
+                } else { // FRESHWATER FISH
+                    type = client.items.get(`freshwater fish`);
+                    amount = Math.floor(Math.random() * 17) + 15;
+                }
+
+
+                user.addFishCaught(type, amount);
+                user.addItem(type, amount);
+                user.addTimesFished();
+                user.save();
+                msg.channel.send({ embed: {
+                    title: `${user.user.username} Fishing`,
+                    description: `You caught ${amount} ${type.name} while fishing!`,
+                    timestamp: Date.now(),
+                    footer: {
+                        text: `${user.user.username}'s fish`,
+                        icon_url: user.user.avatarURL()
+                    },
+                    color: client.colors.success
+                }});
+                break;
             }
         }
+        return;
     }
 }
