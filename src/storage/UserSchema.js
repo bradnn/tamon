@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const { Number } = require('../modules/Number');
 
 const user = Schema({
     userID: String,
@@ -55,6 +54,20 @@ const user = Schema({
                     default: 0
                 },
                 fishCaught: {
+                    type: Object,
+                    default: {}
+                }
+            },
+            mine: {
+                pickUses: {
+                    type: Number,
+                    default: 0
+                },
+                count: {
+                    type: Number,
+                    default: 0
+                },
+                oresMined: {
                     type: Object,
                     default: {}
                 }
@@ -157,6 +170,20 @@ const user = Schema({
             }
         },
         inventory: {
+            type: Object,
+            default: {}
+        },
+        pets: {
+            active: {
+                type: String,
+                default: "None"
+            },
+            storage: {
+                type: Object,
+                default: {}
+            }
+        },
+        buffs: {
             type: Object,
             default: {}
         }

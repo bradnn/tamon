@@ -11,7 +11,7 @@ module.exports = class {
 
         this.price = {
             buy: 100000,
-            sell: 5,
+            sell: false,
             worth: 100000
         }
 

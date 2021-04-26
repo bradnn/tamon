@@ -99,7 +99,6 @@ module.exports = class {
             }});
             return;
         }
-        console.log(user.getItemCount(item) + amount);
         if (item.maxAmount < user.getItemCount(item) + amount) {
             msg.channel.send({ embed: {
                 title: `❌ Error`,

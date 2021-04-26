@@ -8,6 +8,7 @@ const client = Client.get();
 cooldowns = {
     work: 3600000,
     fish: 120000,
+    mine: 180000,
     beg: 30000
 }
 
@@ -455,6 +456,40 @@ module.exports = class {
     }
 
     // ==================================================================================
+    // MINING MANAGEMENT
+    // ==================================================================================
+
+    getOresMined(ore) {
+        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
+        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
+        if (!this.model.profile.commands.mine.oresMined[ore.name]) {
+            this.model.profile.commands.mine.oresMined[ore.name] = 0;
+            return 0;
+        }
+        // RETURN THE AMOUNT THE USER HAS
+        return this.model.profile.commands.mine.oresMined[ore.name];
+    }
+
+    addOresMined(ore, amount = 1) {
+        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
+        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
+        if (!this.model.profile.commands.mine.oresMined[ore.name]) {
+            this.model.profile.commands.mine.oresMined[ore.name] = 0;
+        }
+        // RETURN THE AMOUNT THE USER HAS
+        return this.model.profile.commands.mine.oresMined[ore.name] += amount;
+    }
+
+    getTimesMined() {
+        return this.model.profile.commands.mine.count;
+    }
+
+    addTimesMined(amount = 1) {
+        this.model.profile.commands.mine.pickUses += amount;
+        return this.model.profile.commands.mine.count += amount;
+    }
+
+    // ==================================================================================
     // PAY MANAGEMENT
     // ==================================================================================
 
@@ -494,6 +529,66 @@ module.exports = class {
 
     getPayRecieved() {
         return this.model.profile.commands.pay.totalReceived;
+    }
+
+    // ==================================================================================
+    // PET MANAGEMENT
+    // ==================================================================================
+
+    addPet(name) {
+        var pet = client.pets.get(name);
+        if (!pet) return "NO_PET";
+
+        if (!this.model.profile.pets.storage[pet.name]) this.model.profile.pets.storage[pet.name] = 0;
+        this.model.profile.pets.storage[pet.name] += 1;
+    }
+
+    delPet(name) {
+        var pet = client.pets.get(name);
+        if (!pet) return "NO_PET";
+
+        if (!this.model.profile.pets.storage[pet.name]) return "NO_PET";
+        this.model.profile.pets.storage[pet.name] -= 1;
+    }
+
+    getActivePet() {
+        return this.model.profile.pets.active;
+    }
+
+    setActivePet(pet) {
+        if (!this.model.profile.pets.storage[pet.name]) return "NO_PET";
+        if (this.model.profile.pets.active != "None") {
+            const oldPet = client.pets.get(this.model.profile.pets.active.toLowerCase());
+            if (oldPet) {
+                oldPet.unequipPet(this);
+            }
+        }
+        pet.equipPet(this);
+        this.model.profile.pets.active = pet.name;
+        return pet;
+    }
+
+    // ==================================================================================
+    // BUFF MANAGEMENT
+    // ==================================================================================
+
+    getBuff(type) {
+        if (!this.model.profile.buffs[type]) return 1;
+        return this.model.profile.buffs[type];
+    }
+
+    addBuff(type, amount) {
+        if (!this.model.profile.buffs[type]) {
+            this.model.profile.buffs[type] = 1;
+        }
+        return this.model.profile.buffs[type] += amount;
+    }
+
+    delBuff(type, amount) {
+        if (!this.model.profile.buffs[type]) {
+            this.model.profile.buffs[type] = 1;
+        }
+        return this.model.profile.buffs[type] -= amount;
     }
 
     // ==================================================================================
@@ -550,8 +645,11 @@ module.exports = class {
         try {
             this.model.markModified('profile.commands.work.fires');
             this.model.markModified('profile.commands.fish.fishCaught');
+            this.model.markModified('profile.commands.ores.oresMined');
             this.model.markModified('profile.commands.cooldowns');
             this.model.markModified('profile.inventory');
+            this.model.markModified('profile.pets');
+            this.model.markModified('profile.buffs');
             this.model.save();
         } catch(e) {
             error(`Issue saving model. USER ID = ${this.id}\n${e}`);

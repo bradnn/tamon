@@ -15,6 +15,7 @@ client.aliases = new Collection(); // ALIASES FOR COMMANDS
 client.jobs = new Collection(); // JOB STORAGE
 client.items = new Collection(); // ITEM STORAGE
 client.itemAliases = new Collection(); // ALIASES FOR COMMANDS
+client.pets = new Collection(); // ITEM STORAGE
 client.servers = new Collection(); // GUILD STORAGE
 client.members = new Collection(); // USER STORAGE
 
@@ -76,6 +77,18 @@ async function start() {
                 const job = new file();
                 client.logger.job(`Loading Job: ${name}`);
                 client.jobs.set(name, job);
+            }
+        });
+
+        // LOADING PETS
+        glob (`${process.cwd()}/src/storage/Pets/**/*.js`).then(pets => {
+            for (const petFile of pets) {
+                const { name } = parse(petFile);
+                const file = require(petFile);
+                const pet = new file();
+                const petName = pet.name.toLowerCase();
+                client.logger.pet(`Loading Pet: ${name}`);
+                client.pets.set(petName, pet);
             }
         });
 
