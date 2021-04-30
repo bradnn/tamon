@@ -1,9 +1,19 @@
+/**
+ * THE BOTS CLIENT
+ */
 const { Client } = require("../bot");
-const { error } = require("../modules/Logger");
-const { Number } = require("../modules/Number");
-const { String } = require("../modules/String");
-const { Time } = require("../modules/Time");
 const client = Client.get();
+
+/**
+ * MODULES USED
+ */
+const { error } = require("../modules/Logger");
+const { Time } = require("../modules/Time");
+
+/**
+ * DEFINE ALL SUBCLASSES HERE
+ */
+const EconomyClass = require('./User/Economy.js');
 
 cooldowns = {
     work: 3600000,
@@ -17,87 +27,8 @@ module.exports = class {
         this.id = user.id;
         this.user = user;
         this.model = model;
-    }
 
-    // ==================================================================================
-    // COIN MANAGEMENT
-    // ==================================================================================
-
-    getCoins(format = false) {
-        if (format) { return Number.comma(this.model.profile.balance); };
-        return this.model.profile.balance;
-    }
-
-    addCoins(amount = 0, cmd) {
-        this.model.profile.balance += amount;
-        if (cmd) {
-            switch (cmd) {
-                case "work": {
-                    this.model.profile.commands.work.coinsEarned += amount;
-                    break;
-                }
-                case "beg": {
-                    this.model.profile.commands.beg.coinsEarned += amount;
-                    break;
-                }
-                case "roll": {
-                    this.model.profile.commands.gambling.roll.amountWon += amount;
-                    if (this.getRollLargestWin() < amount) {
-                        this.setRollLargestWin(amount);
-                    }
-                    break;
-                }
-                case "flip": {
-                    this.model.profile.commands.gambling.flip.amountWon += amount;
-                    if (this.getFlipLargestWin() < amount) {
-                        this.setFlipLargestWin(amount);
-                    }
-                    break;
-                }
-                case "sell": {
-                    this.model.profile.commands.shop.amountEarned += amount;
-                    break;
-                }
-                case "pay": {
-                    this.model.profile.commands.pay.transactionLimit += amount;
-                    this.model.profile.commands.pay.totalReceived += amount;
-                    break;
-                }
-            }
-        }
-        return this.model.profile.balance;
-    }
-
-    delCoins(amount = 0, cmd) {
-        this.model.profile.balance -= amount;
-        if (cmd) {
-            switch (cmd) {
-                case "roll": {
-                    this.model.profile.commands.gambling.roll.amountLost += amount;
-                    if (this.getRollLargestLoss() < amount) {
-                        this.setRollLargestLoss(amount);
-                    }
-                    break;
-                }
-                case "flip": {
-                    this.model.profile.commands.gambling.flip.amountLost += amount;
-                    if (this.getFlipLargestLoss() < amount) {
-                        this.setFlipLargestLoss(amount);
-                    }
-                    break;
-                }
-                case "buy": {
-                    this.model.profile.commands.shop.amountSpent += amount;
-                    break;
-                }
-                case "pay": {
-                    this.model.profile.commands.pay.transactionLimit += amount;
-                    this.model.profile.commands.pay.totalSent += amount;
-                    break;
-                }
-            }
-        }
-        return this.model.profile.balance;
+        this.economy = new EconomyClass(model);
     }
 
     // ==================================================================================

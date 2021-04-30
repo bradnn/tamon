@@ -82,7 +82,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
 
-                if (amount > profile.getCoins()) {
+                if (amount > profile.economy.get()) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You need to have ${Number.comma(amount)} in your balance to gamble it.`,
@@ -104,7 +104,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                 };
 
                 if(botRoll > theirRoll) {
-                    profile.delCoins(amount, "roll");
+                    profile.economy.remove(amount, "roll");
                     profile.addRollLoss();
                     msg.channel.send({ embed: {
                         title: `${profile.user.username} Roll`,
@@ -118,7 +118,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     }});
                     break;
                 }
-                profile.addCoins(amount, "roll");
+                profile.economy.add(amount, "roll");
                 profile.addRollWin();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username} Roll`,

@@ -37,7 +37,7 @@ module.exports = class {
                 if (profile.getCooldown("beg", true, msg).response) return;
 
                 const amount = Math.floor(Math.random() * 200) + 100;
-                profile.addCoins(amount, "beg");
+                profile.economy.add(amount, "beg");
                 profile.addBegCount();
                 profile.save();
                 msg.channel.send({ embed: {

@@ -86,7 +86,7 @@ module.exports = class {
             }});
             return;
         }
-        user.addCoins(item.price.sell * amount, "sell");
+        user.economy.add(item.price.sell * amount, "sell");
         user.addShopItemsSold(amount);
         user.delItem(item, amount);
         user.save();

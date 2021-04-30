@@ -83,7 +83,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
 
-                if (amount > profile.getCoins()) {
+                if (amount > profile.economy.get()) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You need to have ${Number.comma(amount)} in your balance to gamble it.`,
@@ -104,7 +104,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                 const results = ["tails", "heads"];
                 const result = results[Math.floor(Math.random() * results.length)];
                 if(choice !== result) {
-                    profile.delCoins(amount, "flip");
+                    profile.economy.del(amount, "flip");
                     profile.addFlipLoss();
                     msg.channel.send({ embed: {
                         title: `${profile.user.username} Flip`,
@@ -118,8 +118,8 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     }});
                     break;
                 }
-                profile.addCoins(amount, "flip");
-                profile.addFlipLoss();
+                profile.economy.add(amount, "flip");
+                profile.addFlipWin();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username} Flip`,
                     description: `You flipped ${result} and won ${Number.comma(amount)} coins!`,

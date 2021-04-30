@@ -73,7 +73,7 @@ module.exports = class {
             return;
         }
         const user = await User.get(msg.author);
-        if (item.price.buy * amount > user.getCoins()) {
+        if (item.price.buy * amount > user.economy.get()) {
             msg.channel.send({ embed: {
                 title: `❌ Error`,
                 description: `You don't have enough coins to buy this. You need ${Number.comma(item.price.buy * amount)} coins.`,
@@ -112,7 +112,7 @@ module.exports = class {
             }});
             return;
         }
-        user.delCoins(item.price.buy * amount, "buy");
+        user.economy.remove(item.price.buy * amount, "buy");
         user.addShopItemsBought(amount);
         user.addItem(item, amount);
         user.save();

@@ -65,7 +65,7 @@ Amount Profited: **\`${Number.comma(profile.getPayRecieved() - profile.getPaySen
                     }});
                     break;
                 }
-                if (amount > profile.getCoins()) {
+                if (amount > profile.economy.get()) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You don't have ${Number.comma(amount)} coins to pay.`,
@@ -108,8 +108,8 @@ Amount Profited: **\`${Number.comma(profile.getPayRecieved() - profile.getPaySen
                     break;
                 }
 
-                profile2.addCoins(amount, "pay");
-                profile.delCoins(amount, "pay");
+                profile2.economy.add(amount, "pay");
+                profile.economy.del(amount, "pay");
                 profile2.save();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username}'s Payment`,
