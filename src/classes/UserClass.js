@@ -13,10 +13,13 @@ const { Time } = require("../modules/Time");
 /**
  * DEFINE ALL SUBCLASSES HERE
  */
+/** @const {class} Economy The economy subclass */
 const EconomyClass = require('./User/Economy.js');
+/** @const {class} Work The work subclass */
+const WorkClass = require('./User/Work.js');
 
 cooldowns = {
-    work: 3600000,
+    work: 0, //3600000
     fish: 120000,
     mine: 180000,
     beg: 30000
@@ -29,6 +32,7 @@ module.exports = class {
         this.model = model;
 
         this.economy = new EconomyClass(model);
+        this.work = new WorkClass(model, client);
     }
 
     // ==================================================================================

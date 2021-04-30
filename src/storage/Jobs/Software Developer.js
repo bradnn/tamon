@@ -18,7 +18,7 @@ const failMessages = [
 
 module.exports = class {
     constructor() {
-        this.name = `Voice Actor`;
+        this.name = `Software Developer`;
         this.description = `Do voice acting for companies that contract you.`; // Description done by sycles#3388
         this.hourRequirement = 0;
         this.salary = 12500;
@@ -31,7 +31,7 @@ module.exports = class {
     }
 
     isUnlocked(user) { // Checks if the user can apply for this job
-        const workCount = user.getWorkCount();
+        const workCount = user.work.getWorkCount();
         if (workCount >= this.unlockHours) {
             return true;
         }

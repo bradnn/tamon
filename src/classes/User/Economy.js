@@ -1,19 +1,36 @@
+/**
+ * @file Basic economy functions for the UserClass.
+ * @author sycles
+ * @version 1.1.1
+ * @since 1.1.1
+ */
+
+/**
+ * A module containing number formatting functions.
+ * @const {object}
+ */
 const { Number } = require("../../modules/Number");
 
+/**
+ * The MongoDB user model
+ * @type {Model}
+ */
 var user;
 
 module.exports = class {
+    /**
+     * Sets the variable user to a user model from MongoDB
+     * @param {Model} model A user model from MongoDB
+     */
     constructor(model) {
-        user = model;
+        user = model; // Sets the user to the model from MongoDB
     }
 
     /**
-     * Returns the users balance as a number or string
+     * Returns the users balance as a number or string.
      * 
-     * @param {bool} format
-     *      Should the number be formatted into a string?
-     * @returns {(number|string)} 
-     *      The users balance or a string of the users balance formatted with commas
+     * @param {bool} format Should the number be formatted into a string?
+     * @returns {(number|string)} The users balance or a string of the users balance formatted with commas.
      */
     get(format = false) {
         if (format) { return Number.comma(user.profile.balance); };
@@ -21,14 +38,11 @@ module.exports = class {
     }
 
     /**
-     * Adds a number of coins to a users balance
+     * Adds a number of coins to a users balance.
      * 
-     * @param {number} [amount=0] 
-     *      Amount of coins to add to the user
-     * @param {string} [cmd] 
-     *      What command is adding the coins, could modify other values if needed
-     * @returns {number} 
-     *      The users final balance
+     * @param {number} [amount=0] Amount of coins to add to the user.
+     * @param {string} [cmd]      What command is adding the coins, could modify other values if needed.
+     * @returns {number} The users final balance.
      */
     add(amount = 0, cmd) {
         user.profile.balance += amount;
@@ -72,14 +86,11 @@ module.exports = class {
 
 
     /**
-     * Removes a number of coins from a users balance
+     * Removes a number of coins from a users balance.
      * 
-     * @param {number} [amount=0] 
-     *      Amount of coins to remove from the user
-     * @param {string} [cmd] 
-     *      What command is removing the coins, could modify other values if needed
-     * @returns {number} 
-     *      The users final balance
+     * @param {number} [amount=0] Amount of coins to remove from the user
+     * @param {string} [cmd]      What command is removing the coins, could modify other values if needed.
+     * @returns {number} The users final balance.
      */
     remove(amount = 0, cmd) {
         user.profile.balance -= amount;
