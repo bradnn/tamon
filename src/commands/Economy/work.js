@@ -179,9 +179,9 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     break;
                 }
 
-                if (user.getCooldown("work", true, msg).response) return;
+                if (user.cooldown.get("work", true, msg).response) return;
 
-                const job = client.jobs.get(user.getJob());
+                const job = client.jobs.get(user.work.getJob());
 
                 const challengeTypes = Object.keys(Challenge);
                 const challengeType = challengeTypes[Math.floor(Math.random() * challengeTypes.length)];

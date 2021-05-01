@@ -1,6 +1,20 @@
+const EconomyClass = require('./User/Economy.js');
+const WorkClass = require('./User/Work.js');
+const BegClass = require('./User/Beg.js');
+const CooldownClass = require('./User/Cooldown.js');
+
+/**
+ * @typedef {object} EconomyClass
+ * @typedef {object} WorkClass
+ * @typedef {object} BegClass
+ * @typedef {object} CooldownClass
+ */
+
 /**
  * THE BOTS CLIENT
  */
+const { User } = require("discord.js");
+const { Document } = require("mongoose");
 const { Client } = require("../bot");
 const client = Client.get();
 
@@ -10,162 +24,27 @@ const client = Client.get();
 const { error } = require("../modules/Logger");
 const { Time } = require("../modules/Time");
 
-/**
- * DEFINE ALL SUBCLASSES HERE
- */
-/** @const {class} Economy The economy subclass */
-const EconomyClass = require('./User/Economy.js');
-/** @const {class} Work The work subclass */
-const WorkClass = require('./User/Work.js');
-
-cooldowns = {
-    work: 0, //3600000
-    fish: 120000,
-    mine: 180000,
-    beg: 30000
-}
-
 module.exports = class {
+    /**
+     * @class
+     * @classdesc The user class used to easily modify the database.
+     * 
+     * @param {User} user 
+     * @param {Document} model 
+     */
     constructor(user, model) {
         this.id = user.id;
         this.user = user;
         this.model = model;
 
+        /** @type {EconomyClass} */
         this.economy = new EconomyClass(model);
+        /** @type {WorkClass} */
         this.work = new WorkClass(model, client);
-    }
-
-    // ==================================================================================
-    // WORK MANAGEMENT
-    // ==================================================================================
-
-    getPay() {
-        var job = client.jobs.get(this.getJob());
-        const JOB_PAY = job.salary;
-
-        return JOB_PAY;
-    }
-
-    getJob() {
-        return this.model.profile.commands.work.job;
-    }
-
-    setJob(job, fired = false) {
-        if (fired) {
-            try {
-                this.model.profile.commands.work.fires[this.getJob()] = new Date();
-            } catch (e) {
-                error(`Issue changing job. USER ID = ${this.id}\n${e}`);
-                return false;
-            }
-        }
-
-        try {
-            this.model.profile.commands.work.job = job;
-        } catch (e) {
-            error(`Issue changing job. USER ID = ${this.id}\n${e}`);
-            return false;
-        }
-        return true;
-    }
-
-    getWorkAmountEarned() {
-        return this.model.profile.commands.work.coinsEarned;
-    }
-
-    getWorkCount() {
-        return this.model.profile.commands.work.count;
-    }
-
-    addWorkCount(amount = 1) {
-        try {
-            this.model.profile.commands.work.count += amount;
-            this.model.profile.commands.work.lastWork = new Date();
-        } catch (e) {
-            error(`Issue changing work count. USER ID = ${this.id}\n${e}`);
-            return false;
-        }
-        return true;
-    }
-    
-    setWorkCount(amount = 0) {
-        try {
-            this.model.profile.commands.work.count = amount;
-        } catch (e) {
-            error(`Issue changing work count. USER ID = ${this.id}\n${e}`);
-            return false;
-        }
-        return true;
-    }
-
-    wasFired(job) {
-        const keys = Object.keys(this.model.profile.commands.work.fires);
-        if (keys.includes(job.name)) {
-            const time = new Date();
-            const fireTime = this.model.profile.commands.work.fires[job.name];
-            const timePassed = Math.abs(fireTime - time);
-            if (timePassed <= 86400000) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    canApply(job) {
-        if (job.unlockHours > this.getWorkCount()) {
-            return false;
-        }
-        return true;
-    }
-
-    canWork() {
-        const lastWorkDay = this.model.profile.commands.work.lastWorkDay;
-        const DAY_LENGTH = 86400000;
-        const date = new Date();
-        const timeSince = Math.abs(lastWorkDay - date);
-        if (lastWorkDay.getTime() === 0) {
-            this.model.profile.commands.work.lastWorkDay = date;
-            return true;
-        }
-        if (timeSince >= DAY_LENGTH) {
-            const job = client.jobs.get(this.getJob())
-            this.model.profile.commands.work.todaysWorks = 0;
-            this.model.profile.commands.work.lastWorkDay = date;
-            if (timeSince >= (DAY_LENGTH * 2) || this.model.profile.commands.work.todaysWorks < job.hourRequirement) {
-                if (!job.hourRequirement < 1) {
-                    this.setJob("None", true);
-                    return false;
-                }
-                return true;
-            }
-            return true;
-        }
-        return true;
-    }
-
-    // ==================================================================================
-    // BEG MANAGEMENT
-    // ==================================================================================
-
-    getBegCount() {
-        return this.model.profile.commands.beg.count;
-    }
-
-    addBegCount(amount = 1) {
-        try {
-            this.model.profile.commands.beg.count += amount;
-        } catch (e) {
-            error(`Issue changing beg count. USER ID = ${this.id}\n${e}`);
-            return false;
-        }
-        return true;
-    }
-
-    getBegAmountEarned() {
-        return this.model.profile.commands.beg.coinsEarned;
+        /** @type {BegClass} */
+        this.beg = new BegClass(model);
+        /** @type {CooldownClass} */
+        this.cooldown = new CooldownClass(model, user);
     }
 
     // ==================================================================================
@@ -527,55 +406,14 @@ module.exports = class {
     }
 
     // ==================================================================================
-    // COOLDOWN MANAGEMENT
-    // ==================================================================================
-
-    getCooldown(type, set = true, msg) {
-        const previousTime = this.model.profile.commands.cooldowns[type]; // When command was last used
-        const nowTime = new Date(); // Current Date
-        const timePassed = Math.abs(previousTime - nowTime); // How long its been since the command was used
-
-        var cooldown = cooldowns[type];
-
-        if (timePassed <= cooldown) {
-            const timeLeftMilli = Math.ceil(cooldown - timePassed)
-            const timeLeftSec = (timeLeftMilli / 1000);
-            const timeLeftFormatted = Time.format(timeLeftMilli);
-
-            if (msg) msg.channel.send(this.generateCooldownEmbed(this.user, type, timeLeftFormatted));
-
-            return {
-                response: true,
-                timeLeftSec,
-                timeLeftMilli,
-                timeLeftFormatted,
-                message: `You need to wait ${timeLeftFormatted} before you can use ${type} again.`,
-                embed: this.generateCooldownEmbed(this.user, type, timeLeftFormatted)
-            }
-        }
-
-        if (set) this.model.profile.commands.cooldowns[type] = new Date();
-        return {
-            response: false
-        }
-    }
-
-    generateCooldownEmbed(user, type, remaining) {
-        const embed = {
-            embed: {
-                title: `Slow down ${user.username} ⏱`,
-                description: `You need to wait ${remaining} before you can use ${type} again.`,
-                color: client.colors.invalid
-            }
-        }
-
-        return embed;
-    }
-
-    // ==================================================================================
     // DB MANAGEMENT
     // ==================================================================================
 
+    /**
+     * Save to the database.
+     * 
+     * @returns {boolean} Was it successfully saved?
+     */
     save() {
         try {
             this.model.markModified('profile.commands.work.fires');

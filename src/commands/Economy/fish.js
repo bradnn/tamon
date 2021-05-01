@@ -89,7 +89,7 @@ Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.pric
                     return;
                 }
 
-                if (user.getCooldown("fish", true, msg).response) return;
+                if (user.cooldown.get("fish", true, msg).response) return;
 
                 var amount;
                 var type;

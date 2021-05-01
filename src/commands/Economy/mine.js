@@ -86,7 +86,7 @@ Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.
                     return;
                 }
 
-                if (user.getCooldown("mine", true, msg).response) return;
+                if (user.cooldown.get("mine", true, msg).response) return;
 
                 var amount;
                 var type;

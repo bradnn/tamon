@@ -5,22 +5,22 @@
  * @since 1.1.1
  */
 
-/**
- * A module containing number formatting functions.
- * @const {object}
- */
+const { Document } = require("mongoose");
+
+/** @const {object} Number A module containing number formatting functions */
 const { Number } = require("../../modules/Number");
 
-/**
- * The MongoDB user model
- * @type {Model}
- */
+/** @type {Document} The MongoDB user model */
 var user;
 
 module.exports = class {
     /**
-     * Sets the variable user to a user model from MongoDB
-     * @param {Model} model A user model from MongoDB
+     * Sets the variable user to a user model from MongoDB.
+     * 
+     * @class
+     * @classdesc The economy module of the UserClass.
+     * 
+     * @param {Document} model A user model from MongoDB
      */
     constructor(model) {
         user = model; // Sets the user to the model from MongoDB
@@ -29,11 +29,11 @@ module.exports = class {
     /**
      * Returns the users balance as a number or string.
      * 
-     * @param {bool} format Should the number be formatted into a string?
+     * @param {boolean} [format=false] Should the number be formatted into a string?
      * @returns {(number|string)} The users balance or a string of the users balance formatted with commas.
      */
     get(format = false) {
-        if (format) { return Number.comma(user.profile.balance); };
+        if (format) { return Number.comma(user.profile.balance); }
         return user.profile.balance;
     }
 

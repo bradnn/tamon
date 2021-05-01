@@ -5,18 +5,24 @@
  * @since 1.1.1
  */
 
-/** @const {object} Logger The logger object */
+const { Document } = require("mongoose");
+
+/** @const {object} Logger A module for easier logging. */
 const Logger = require('../../modules/Logger');
 
-/** @type {Model} The MongoDB user model */
+/** @type {Document} The MongoDB user model */
 var user;
 /** @type {Client} The discord client */
 var client;
 
 module.exports = class {
     /**
-     * Sets the variable user to a user model from MongoDB
-     * @param {Model} model A user model from MongoDB
+     * Sets the variable user to a user model from MongoDB.
+     * 
+     * @class
+     * @classdesc The work module of the UserClass.
+     * 
+     * @param {Document} model A user model from MongoDB
      */
     constructor(model, Client) {
         user = model;
@@ -48,8 +54,8 @@ module.exports = class {
      * Sets the users job to a string.
      * 
      * @param {string} job The users job.
-     * @param {bool} fired Was the job set due to firing or a normal job set.
-     * @returns {bool} Was the job set successfully?
+     * @param {boolean} [fired=false] Was the job set due to firing or a normal job set.
+     * @returns {boolean} Was the job set successfully?
      */
     setJob(job, fired = false) {
         if (fired) {
@@ -92,7 +98,7 @@ module.exports = class {
      * Adds a number to the users work count (Typically left blank to add 1 work).
      * 
      * @param {number} [amount=1] Amount of times to add to the work count.
-     * @returns {bool} Was the work count added successfully?
+     * @returns {boolean} Was the work count added successfully?
      */
     addCount(amount = 1) {
         try {
@@ -108,8 +114,8 @@ module.exports = class {
     /**
      * Set the work count to a number.
      * 
-     * @param {number} amount What should the work count be set to.
-     * @returns {bool} Was the work count set successfully?
+     * @param {number} [amount=0] What should the work count be set to.
+     * @returns {boolean} Was the work count set successfully?
      */
     setCount(amount = 0) {
         try {
@@ -125,7 +131,7 @@ module.exports = class {
      * Check if the user was fired from a job within 24 hours.
      * 
      * @param {object} job A job object within the folder src/storage/Jobs/.
-     * @returns {bool} Was the user fired or can they apply for the job.
+     * @returns {boolean} Was the user fired or can they apply for the job.
      */
     wasFired(job) {
         const keys = Object.keys(user.profile.commands.work.fires);
@@ -145,7 +151,7 @@ module.exports = class {
      * Check if a user meets the requirements for a job.
      * 
      * @param {object} job A job object within the folder src/storage/Jobs/.
-     * @returns {bool} Is the user able to apply or not.
+     * @returns {boolean} Is the user able to apply or not.
      */
     canApply(job) {
         if (job.unlockHours > this.getCount()) {
@@ -157,7 +163,7 @@ module.exports = class {
     /**
      * Checks if the user is able to work or if they lost their streak and need to apply again.
      * 
-     * @returns {bool} Can the user work or not.
+     * @returns {boolean} Can the user work or not.
      */
     canWork() {
         const lastWorkDay = user.profile.commands.work.lastWorkDay;

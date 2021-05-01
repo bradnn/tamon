@@ -3,8 +3,21 @@ const userSchema = require("../storage/UserSchema.js");
 const userClass = require("../classes/UserClass");
 const client = Client.get();
 
+const { User } = require("discord.js");
+const { Document } = require("mongoose");
+
 module.exports.User = {
-    get: async function (user) { // Returns user class
+    /**
+     * @typedef {object} userClass
+     */
+
+    /**
+     * Gets the user's class.
+     * 
+     * @param {User} user 
+     * @returns {userClass} userClass instance.
+     */
+    get: async function (user) { // Returns user class.
         if (client.members.get(user.id)) { // Does the class already exist in members collection?
             return client.members.get(user.id); // Return class if it does
         }
@@ -15,9 +28,17 @@ module.exports.User = {
         });
         if (!lookup) { lookup = await this.create(user.id) }; // If the user doesn't exist, create it.
         const newUser = new userClass(user, lookup); // Call the class with user and model.
+        console.log(typeof new userClass(user, lookup));
         client.members.set(user.id, newUser); // Add the class to the members collection.
         return newUser;
     },
+
+    /**
+     * Add the user to the database.
+     * 
+     * @param {string} id The user's discord ID.
+     * @returns {Document} Returns the users MongoDB Document.
+     */
     create: async function (id) {
         return await userSchema.create({ // Creates a new model in the database
             userID: id
