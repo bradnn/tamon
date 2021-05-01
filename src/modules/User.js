@@ -28,7 +28,6 @@ module.exports.User = {
         });
         if (!lookup) { lookup = await this.create(user.id) }; // If the user doesn't exist, create it.
         const newUser = new userClass(user, lookup); // Call the class with user and model.
-        console.log(typeof new userClass(user, lookup));
         client.members.set(user.id, newUser); // Add the class to the members collection.
         return newUser;
     },

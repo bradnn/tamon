@@ -20,12 +20,12 @@ module.exports = class {
                     profile = await User.get(user);
                 }
 
-                const WIN_AMOUNT = profile.getFlipAmountWon();
-                const LOSS_AMOUNT = profile.getFlipAmountLost();
+                const WIN_AMOUNT = profile.gambling.flip.getAmountWon();
+                const LOSS_AMOUNT = profile.gambling.flip.getAmountLost();
                 const TOTAL_PROFIT = WIN_AMOUNT - LOSS_AMOUNT;
 
-                const WINS = profile.getFlipWins();
-                const LOSSES = profile.getFlipLosses();
+                const WINS = profile.gambling.flip.getWins();
+                const LOSSES = profile.gambling.flip.getLosses();
                 const TOTAL_FLIPS = WINS + LOSSES;
 
                 msg.channel.send({ embed: { 
@@ -37,8 +37,8 @@ module.exports = class {
 Flips won: **\`${Number.comma(WINS)}\`**
 Flips lost: **\`${Number.comma(LOSSES)}\`**
 
-Largest win: **\`${Number.comma(profile.getFlipLargestWin())}\`**
-Largest loss: **\`${Number.comma(profile.getFlipLargestLoss())}\`**
+Largest win: **\`${Number.comma(profile.gambling.flip.getLargestWin())}\`**
+Largest loss: **\`${Number.comma(profile.gambling.flip.getLargestLoss())}\`**
 
 Amount won: **\`${Number.comma(WIN_AMOUNT)} coins\`**
 Amount lost: **\`${Number.comma(LOSS_AMOUNT)} coins\`**
@@ -104,8 +104,8 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                 const results = ["tails", "heads"];
                 const result = results[Math.floor(Math.random() * results.length)];
                 if(choice !== result) {
-                    profile.economy.del(amount, "flip");
-                    profile.addFlipLoss();
+                    profile.economy.remove(amount, "flip");
+                    profile.gambling.flip.addLoss();
                     msg.channel.send({ embed: {
                         title: `${profile.user.username} Flip`,
                         description: `You flipped ${result} and lost ${Number.comma(amount)} coins.`,
@@ -119,7 +119,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
                 profile.economy.add(amount, "flip");
-                profile.addFlipWin();
+                profile.gambling.flip.addWins();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username} Flip`,
                     description: `You flipped ${result} and won ${Number.comma(amount)} coins!`,

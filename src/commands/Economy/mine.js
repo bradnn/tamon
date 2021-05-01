@@ -25,7 +25,7 @@ module.exports = class {
                         name: `${user.user.username}'s stats`,
                         icon_url: user.user.avatarURL()
                     },
-                    description: `Times Mined: **\`${user.getTimesMined()}\`**`,
+                    description: `Times Mined: **\`${user.mine.getCount()}\`**`,
                     timestamp: new Date(),
                     footer: {
                         text: `${user.user.username}'s mining stats`
@@ -55,7 +55,7 @@ module.exports = class {
 
                 for (var ore in Object.values(oreObj)) {
                     ore = Object.values(oreObj)[ore];
-                    oreString += `${ore.emoji} **${ore.name}**: **\`${Number.comma(user.getItemCount(ore))}\`**
+                    oreString += `${ore.emoji} **${ore.name}**: **\`${Number.comma(user.mine.getOreCount(ore))}\`**
 Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.sell)} coins\n\n`;
                 }
 
@@ -72,7 +72,7 @@ Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.
             }
             default: {
                 const pickaxeItem = client.items.get(`pickaxe`);
-                if (user.getItemCount(pickaxeItem) < 1) {
+                if (user.inventory.getCount(pickaxeItem) < 1) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You don't own a pickaxe! Do \`${options.prefix}shop\` to check the price.`,
@@ -109,16 +109,16 @@ Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.
 
                 amount = Math.round(amount * user.getBuff('mineAmount'));
 
-                user.addOresMined(type, amount);
-                user.addItem(type, amount);
-                user.addTimesMined();
+                user.mine.addOreCount(type, amount);
+                user.inventory.add(type, amount);
+                user.mine.addCount();
                 user.save();
                 msg.channel.send({ embed: {
                     title: `${user.user.username} Mining`,
                     description: `You visited a mineshaft and mined ${amount}x ${type.name}.`,
                     timestamp: Date.now(),
                     footer: {
-                        text: `${user.user.username}'s mining quarry`,
+                        text: `do ${options.prefix}mine bag`,
                         icon_url: user.user.avatarURL()
                     },
                     color: client.colors.success

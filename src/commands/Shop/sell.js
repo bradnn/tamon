@@ -73,7 +73,7 @@ module.exports = class {
             return;
         }
         const user = await User.get(msg.author);
-        if (amount > user.getItemCount(item)) {
+        if (amount > user.inventory.getCount(item)) {
             msg.channel.send({ embed: {
                 title: `❌ Error`,
                 description: `You don't have enough ${item.name} to sell. You need ${Number.comma(amount)}x ${item.name}.`,
@@ -87,8 +87,8 @@ module.exports = class {
             return;
         }
         user.economy.add(item.price.sell * amount, "sell");
-        user.addShopItemsSold(amount);
-        user.delItem(item, amount);
+        user.shop.addSoldCount(amount);
+        user.inventory.remove(item, amount);
         user.save();
         msg.channel.send({ embed: {
             title: `${user.user.username} Sale`,

@@ -5,13 +5,16 @@
  * @since 1.1.1
  */
 
-const { User, Message } = require("discord.js");
+const { User, Message, Client } = require("discord.js");
 const { Document } = require("mongoose");
+const { Time } = require("../../modules/Time");
 
 /** @type {Document} The MongoDB user model */
 var user; 
 /** @type {User} The user's discord object */
 var member;
+/** @type {Client} */
+var client;
 
 cooldowns = {
     work: 0, //3600000
@@ -28,11 +31,13 @@ module.exports = class {
      * @classdesc Cooldown module for the UserClass.
      * 
      * @param {Document} model A user model from MongoDB.
+     * @param {Client} Client
      * @param {User} User 
      */
-    constructor(model, User) {
+    constructor(model, Client, User) {
         user = model; // Sets the user to the model from MongoDB.
         member = User; // Set the member to the users discord.js object.
+        client = Client;
     }
 
     /**

@@ -20,12 +20,12 @@ module.exports = class {
                     profile = await User.get(user);
                 }
 
-                const WIN_AMOUNT = profile.getRollAmountWon();
-                const LOSS_AMOUNT = profile.getRollAmountLost();
+                const WIN_AMOUNT = profile.gambling.roll.getAmountWon();
+                const LOSS_AMOUNT = profile.gambling.roll.getAmountLost();
                 const TOTAL_PROFIT = WIN_AMOUNT - LOSS_AMOUNT;
 
-                const WINS = profile.getRollWins();
-                const LOSSES = profile.getRollLosses();
+                const WINS = profile.gambling.roll.getWins();
+                const LOSSES = profile.gambling.roll.getLosses();
                 const TOTAL_ROLLS = WINS + LOSSES;
 
                 msg.channel.send({ embed: { 
@@ -37,8 +37,8 @@ module.exports = class {
 Rolls won: **\`${Number.comma(WINS)}\`**
 Rolls lost: **\`${Number.comma(LOSSES)}\`**
 
-Largest win: **\`${Number.comma(profile.getRollLargestWin())}\`**
-Largest loss: **\`${Number.comma(profile.getRollLargestLoss())}\`**
+Largest win: **\`${Number.comma(profile.gambling.roll.getLargestWin())}\`**
+Largest loss: **\`${Number.comma(profile.gambling.roll.getLargestLoss())}\`**
 
 Amount won: **\`${Number.comma(WIN_AMOUNT)} coins\`**
 Amount lost: **\`${Number.comma(LOSS_AMOUNT)} coins\`**
@@ -105,7 +105,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
 
                 if(botRoll > theirRoll) {
                     profile.economy.remove(amount, "roll");
-                    profile.addRollLoss();
+                    profile.gambling.roll.addLoss();
                     msg.channel.send({ embed: {
                         title: `${profile.user.username} Roll`,
                         description: `You rolled a ${theirRoll} and I rolled a ${botRoll}. You lost ${Number.comma(amount)} coins.`,
@@ -119,7 +119,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
                 profile.economy.add(amount, "roll");
-                profile.addRollWin();
+                profile.gambling.roll.addWins();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username} Roll`,
                     description: `You rolled a ${theirRoll} and I rolled a ${botRoll}. You won ${Number.comma(amount)} coins!`,

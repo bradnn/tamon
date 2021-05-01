@@ -20,7 +20,7 @@ module.exports = class {
             fields: [
                 {
                     name: `Inventory`,
-                    value: `${profile.getTotalItemCount()} items (Worth ${Number.comma(profile.getTotalItemWorth())} coins)`
+                    value: `${profile.inventory.getTotalCount()} items (Worth ${Number.comma(profile.inventory.getWorth())} coins)`
                 },
                 {
                     name: `Pets`,

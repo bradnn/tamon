@@ -2,15 +2,25 @@ const EconomyClass = require('./User/Economy.js');
 const WorkClass = require('./User/Work.js');
 const BegClass = require('./User/Beg.js');
 const CooldownClass = require('./User/Cooldown.js');
+const GamblingClass = require('./User/Gambling/Main.js');
+const InventoryClass = require('./User/Inventory.js');
+const ShopClass = require('./User/Shop.js');
+const FishClass = require('./User/Fish.js');
+const MineClass = require('./User/Mine.js');
 
 /**
  * @typedef {object} EconomyClass
  * @typedef {object} WorkClass
  * @typedef {object} BegClass
  * @typedef {object} CooldownClass
+ * @typedef {object} GamblingClass
+ * @typedef {object} InventoryClass
+ * @typedef {object} ShopClass
+ * @typedef {object} FishClass
+ * @typedef {object} MineClass
  */
 
-/**
+/*
  * THE BOTS CLIENT
  */
 const { User } = require("discord.js");
@@ -18,7 +28,7 @@ const { Document } = require("mongoose");
 const { Client } = require("../bot");
 const client = Client.get();
 
-/**
+/*
  * MODULES USED
  */
 const { error } = require("../modules/Logger");
@@ -39,268 +49,30 @@ module.exports = class {
 
         /** @type {EconomyClass} */
         this.economy = new EconomyClass(model);
+
         /** @type {WorkClass} */
         this.work = new WorkClass(model, client);
+
         /** @type {BegClass} */
         this.beg = new BegClass(model);
+
         /** @type {CooldownClass} */
-        this.cooldown = new CooldownClass(model, user);
-    }
+        this.cooldown = new CooldownClass(model, client, user);
 
-    // ==================================================================================
-    // GAMBLING MANAGEMENT
-    // ==================================================================================
+        /** @type {GamblingClass} */
+        this.gambling = new GamblingClass(model);
 
-    // ROLL COMMAND
-    getRollAmountWon() {
-        return this.model.profile.commands.gambling.roll.amountWon;
-    }
+        /** @type {InventoryClass} */
+        this.inventory = new InventoryClass(model);
 
-    getRollAmountLost() {
-        return this.model.profile.commands.gambling.roll.amountLost;
-    }
+        /** @type {ShopClass} */
+        this.shop = new ShopClass(model);
 
-    getRollWins() {
-        return this.model.profile.commands.gambling.roll.wins;
-    }
+        /** @type {FishClass} */
+        this.fish = new FishClass(model);
 
-    addRollWin(amount = 1) {
-        this.model.profile.commands.gambling.roll.wins += amount;
-        return true;
-    }
-
-    getRollLosses() {
-        return this.model.profile.commands.gambling.roll.losses;
-    }
-
-    addRollLoss(amount = 1) {
-        this.model.profile.commands.gambling.roll.losses += amount;
-        return true;
-    }
-
-    setRollLargestWin(amount = 1) {
-        this.model.profile.commands.gambling.roll.largestWin = amount;
-        return true;
-    }
-
-    getRollLargestWin() {
-        return this.model.profile.commands.gambling.roll.largestWin;
-    }
-
-    setRollLargestLoss(amount = 1) {
-        this.model.profile.commands.gambling.roll.largestLoss = amount;
-        return true;
-    }
-
-    getRollLargestLoss() {
-        return this.model.profile.commands.gambling.roll.largestLoss;
-    }
-
-    // FLIP COMMAND
-    getFlipAmountWon() {
-        return this.model.profile.commands.gambling.flip.amountWon;
-    }
-    
-    getFlipAmountLost() {
-        return this.model.profile.commands.gambling.flip.amountLost;
-    }
-
-    getFlipWins() {
-        return this.model.profile.commands.gambling.flip.wins;
-    }
-
-    addFlipWin(amount = 1) {
-        this.model.profile.commands.gambling.flip.wins += amount;
-        return true;
-    }
-
-    getFlipLosses() {
-        return this.model.profile.commands.gambling.flip.losses;
-    }
-
-    addFlipLoss(amount = 1) {
-        this.model.profile.commands.gambling.flip.losses += amount;
-        return true;
-    }
-
-    setFlipLargestWin(amount = 1) {
-        this.model.profile.commands.gambling.flip.largestWin = amount;
-        return true;
-    }
-
-    getFlipLargestWin() {
-        return this.model.profile.commands.gambling.flip.largestWin;
-    }
-
-    setFlipLargestLoss(amount = 1) {
-        this.model.profile.commands.gambling.flip.largestLoss = amount;
-        return true;
-    }
-
-    getFlipLargestLoss() {
-        return this.model.profile.commands.gambling.flip.largestLoss;
-    }
-
-    // ==================================================================================
-    // INVENTORY MANAGEMENT
-    // ==================================================================================
-
-    addItem(item, amount = 1) {
-        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
-        if (!this.model.profile.inventory[item.category]) {
-            this.model.profile.inventory[item.category] = {};
-        }
-        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
-        if (!this.model.profile.inventory[item.category][item.name]) {
-            this.model.profile.inventory[item.category][item.name] = 0;
-        }
-        // ADD THE ITEM TO THE USER
-        this.model.profile.inventory[item.category][item.name] += amount;
-        return;
-    }
-
-    delItem(item, amount = 1) {
-        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
-        if (!this.model.profile.inventory[item.category]) {
-            this.model.profile.inventory[item.category] = {};
-        }
-        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
-        if (!this.model.profile.inventory[item.category][item.name]) {
-            this.model.profile.inventory[item.category][item.name] = 0;
-            return false;
-        }
-        // REMOVE THE ITEM FROM THE USER
-        this.model.profile.inventory[item.category][item.name] -= amount;
-        return;
-    }
-
-    getItemCount(item) {
-        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
-        if (!this.model.profile.inventory[item.category]) {
-            this.model.profile.inventory[item.category] = {};
-        }
-        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
-        if (!this.model.profile.inventory[item.category][item.name]) {
-            this.model.profile.inventory[item.category][item.name] = 0;
-            return 0;
-        }
-        // RETURN THE AMOUNT THE USER HAS
-        return this.model.profile.inventory[item.category][item.name];
-    }
-
-    getTotalItemCount() {
-        var count = 0;
-        
-        for (var category in this.model.profile.inventory) {
-            for (var item in this.model.profile.inventory[category]) {
-                count += this.model.profile.inventory[category][item];
-            }
-        }
-        return count;
-    }
-
-    getTotalItemWorth() {
-        var count = 0;
-        
-        for (var category in this.model.profile.inventory) {
-            for (var item in this.model.profile.inventory[category]) {
-                item = client.items.get(item.toLowerCase());
-                if (item.price.worth) {
-                    count += item.price.worth;
-                }
-            }
-        }
-        return count;
-    }
-
-    // ==================================================================================
-    // SHOP MANAGEMENT
-    // ==================================================================================
-
-    getShopItemsBought() {
-        return this.model.profile.commands.shop.itemsBought;
-    }
-
-    addShopItemsBought(amount = 0) {
-        this.model.profile.commands.shop.itemsBought += amount;
-        return;
-    }
-
-    getShopItemsSold() {
-        return this.model.profile.commands.shop.itemsSold;
-    }
-
-    addShopItemsSold(amount = 0) {
-        this.model.profile.commands.shop.itemsSold += amount;
-        return;
-    }
-
-    // ==================================================================================
-    // FISHING MANAGEMENT
-    // ==================================================================================
-
-    getFishCaught(fish) {
-        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
-        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
-        if (!this.model.profile.commands.fish.fishCaught[fish.name]) {
-            this.model.profile.commands.fish.fishCaught[fish.name] = 0;
-            return 0;
-        }
-        // RETURN THE AMOUNT THE USER HAS
-        return this.model.profile.commands.fish.fishCaught[fish.name];
-    }
-
-    addFishCaught(fish, amount = 1) {
-        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
-        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
-        if (!this.model.profile.commands.fish.fishCaught[fish.name]) {
-            this.model.profile.commands.fish.fishCaught[fish.name] = 0;
-        }
-        // RETURN THE AMOUNT THE USER HAS
-        return this.model.profile.commands.fish.fishCaught[fish.name] += amount;
-    }
-
-    getTimesFished() {
-        return this.model.profile.commands.fish.count;
-    }
-
-    addTimesFished(amount = 1) {
-        this.model.profile.commands.fish.rodUses += amount;
-        return this.model.profile.commands.fish.count += amount;
-    }
-
-    // ==================================================================================
-    // MINING MANAGEMENT
-    // ==================================================================================
-
-    getOresMined(ore) {
-        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
-        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
-        if (!this.model.profile.commands.mine.oresMined[ore.name]) {
-            this.model.profile.commands.mine.oresMined[ore.name] = 0;
-            return 0;
-        }
-        // RETURN THE AMOUNT THE USER HAS
-        return this.model.profile.commands.mine.oresMined[ore.name];
-    }
-
-    addOresMined(ore, amount = 1) {
-        // MAKE SURE ITEM'S CATEGORY EXISTS IN USERS INVENTORY
-        // MAKE SURE THE ITEM EXISTS IN THE CATEGORY
-        if (!this.model.profile.commands.mine.oresMined[ore.name]) {
-            this.model.profile.commands.mine.oresMined[ore.name] = 0;
-        }
-        // RETURN THE AMOUNT THE USER HAS
-        return this.model.profile.commands.mine.oresMined[ore.name] += amount;
-    }
-
-    getTimesMined() {
-        return this.model.profile.commands.mine.count;
-    }
-
-    addTimesMined(amount = 1) {
-        this.model.profile.commands.mine.pickUses += amount;
-        return this.model.profile.commands.mine.count += amount;
+        /** @type {MineClass} */
+        this.mine = new MineClass(model);
     }
 
     // ==================================================================================
