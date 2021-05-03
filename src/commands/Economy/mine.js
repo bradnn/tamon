@@ -107,7 +107,7 @@ Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.
                     amount = Math.floor(Math.random() * 17) + 15;
                 }
 
-                amount = Math.round(amount * user.getBuff('mineAmount'));
+                amount = Math.round(amount * user.buff.get('mineAmount'));
 
                 user.mine.addOreCount(type, amount);
                 user.inventory.add(type, amount);

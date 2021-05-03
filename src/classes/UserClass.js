@@ -7,6 +7,9 @@ const InventoryClass = require('./User/Inventory.js');
 const ShopClass = require('./User/Shop.js');
 const FishClass = require('./User/Fish.js');
 const MineClass = require('./User/Mine.js');
+const PayClass = require('./User/Pay.js');
+const PetClass = require('./User/Pet.js');
+const BuffClass = require('./User/Buff.js');
 
 /**
  * @typedef {object} EconomyClass
@@ -18,13 +21,17 @@ const MineClass = require('./User/Mine.js');
  * @typedef {object} ShopClass
  * @typedef {object} FishClass
  * @typedef {object} MineClass
+ * @typedef {object} PayClass
+ * @typedef {object} PetClass
+ * @typedef {object} BuffClass
  */
+
+const { User } = require("discord.js");
+const { Document } = require("mongoose");
 
 /*
  * THE BOTS CLIENT
  */
-const { User } = require("discord.js");
-const { Document } = require("mongoose");
 const { Client } = require("../bot");
 const client = Client.get();
 
@@ -32,7 +39,6 @@ const client = Client.get();
  * MODULES USED
  */
 const { error } = require("../modules/Logger");
-const { Time } = require("../modules/Time");
 
 module.exports = class {
     /**
@@ -73,113 +79,16 @@ module.exports = class {
 
         /** @type {MineClass} */
         this.mine = new MineClass(model);
+
+        /** @type {PayClass} */
+        this.pay = new PayClass(model);
+
+        /** @type {PetClass} */
+        this.pet = new PetClass(model);
+
+        /** @type {BuffClass} */
+        this.buff = new BuffClass(model);
     }
-
-    // ==================================================================================
-    // PAY MANAGEMENT
-    // ==================================================================================
-
-    canPay(amount) {
-        const USER_LIMIT = 500000;
-        const previousPay = this.model.profile.commands.pay.limitDate;
-        const time = new Date();
-        const timePassed = Math.abs(previousPay - time);
-        if (this.model.profile.commands.pay.transactionLimit + amount > USER_LIMIT) {
-            if (timePassed > 86400000) {
-                this.model.profile.commands.pay.limitDate = time;
-                this.model.profile.commands.pay.transactionLimit = 0
-                return {
-                    canPay: true,
-                    limit: USER_LIMIT
-                }
-            }
-            return {
-                canPay: false,
-                limit: USER_LIMIT
-            }
-        }
-        if (timePassed > 86400000) {
-            this.model.profile.commands.pay.limitDate = time;
-            this.model.profile.commands.pay.transactionLimit = 0
-        }
-
-        return {
-            canPay: true,
-            limit: USER_LIMIT
-        }
-    }
-
-    getPaySent() {
-        return this.model.profile.commands.pay.totalSent;
-    }
-
-    getPayRecieved() {
-        return this.model.profile.commands.pay.totalReceived;
-    }
-
-    // ==================================================================================
-    // PET MANAGEMENT
-    // ==================================================================================
-
-    addPet(name) {
-        var pet = client.pets.get(name);
-        if (!pet) return "NO_PET";
-
-        if (!this.model.profile.pets.storage[pet.name]) this.model.profile.pets.storage[pet.name] = 0;
-        this.model.profile.pets.storage[pet.name] += 1;
-    }
-
-    delPet(name) {
-        var pet = client.pets.get(name);
-        if (!pet) return "NO_PET";
-
-        if (!this.model.profile.pets.storage[pet.name]) return "NO_PET";
-        this.model.profile.pets.storage[pet.name] -= 1;
-    }
-
-    getActivePet() {
-        return this.model.profile.pets.active;
-    }
-
-    setActivePet(pet) {
-        if (!this.model.profile.pets.storage[pet.name]) return "NO_PET";
-        if (this.model.profile.pets.active != "None") {
-            const oldPet = client.pets.get(this.model.profile.pets.active.toLowerCase());
-            if (oldPet) {
-                oldPet.unequipPet(this);
-            }
-        }
-        pet.equipPet(this);
-        this.model.profile.pets.active = pet.name;
-        return pet;
-    }
-
-    // ==================================================================================
-    // BUFF MANAGEMENT
-    // ==================================================================================
-
-    getBuff(type) {
-        if (!this.model.profile.buffs[type]) return 1;
-        return this.model.profile.buffs[type];
-    }
-
-    addBuff(type, amount) {
-        if (!this.model.profile.buffs[type]) {
-            this.model.profile.buffs[type] = 1;
-        }
-        return this.model.profile.buffs[type] += amount;
-    }
-
-    delBuff(type, amount) {
-        if (!this.model.profile.buffs[type]) {
-            this.model.profile.buffs[type] = 1;
-        }
-        return this.model.profile.buffs[type] -= amount;
-    }
-
-    // ==================================================================================
-    // DB MANAGEMENT
-    // ==================================================================================
 
     /**
      * Save to the database.

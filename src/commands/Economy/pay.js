@@ -24,9 +24,9 @@ module.exports = class {
                         name: `${profile.user.username}'s stats`,
                         icon_url: profile.user.avatarURL()
                     },
-                    description: `Amount Sent: **\`${Number.comma(profile.getPaySent())}\`**
-Amount Recieved: **\`${Number.comma(profile.getPayRecieved())}\`**
-Amount Profited: **\`${Number.comma(profile.getPayRecieved() - profile.getPaySent())}\`**`,
+                    description: `Amount Sent: **\`${Number.comma(profile.pay.getPaySent())}\`**
+Amount Recieved: **\`${Number.comma(profile.pay.getPayRecieved())}\`**
+Amount Profited: **\`${Number.comma(profile.pay.getPayRecieved() - profile.pay.getPaySent())}\`**`,
                     timestamp: new Date(),
                     footer: {
                         text: `${profile.user.username}'s pay stats`
@@ -78,7 +78,7 @@ Amount Profited: **\`${Number.comma(profile.getPayRecieved() - profile.getPaySen
                     }});
                     break;
                 }
-                const canProfilePay = profile.canPay(amount);
+                const canProfilePay = profile.pay.canPay(amount);
                 if (!canProfilePay.canPay) { 
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
@@ -93,7 +93,7 @@ Amount Profited: **\`${Number.comma(profile.getPayRecieved() - profile.getPaySen
                     break;
                 }
                 var profile2 = await User.get(user2);
-                const canProfile2Pay = profile2.canPay(amount);
+                const canProfile2Pay = profile2.pay.canPay(amount);
                 if (!canProfile2Pay.canPay) { 
                     msg.channel.send({ embed: {
                         title: `❌ Error`,

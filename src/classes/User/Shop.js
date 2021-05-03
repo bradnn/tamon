@@ -19,7 +19,7 @@ const { Document } = require("mongoose");
       * 
       * @param {Document} model A user model from MongoDB.
       */
-    constructor(model, Client) {
+    constructor(model) {
         user = model;
     }
 

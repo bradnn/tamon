@@ -119,7 +119,7 @@ Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.pric
                     amount = Math.floor(Math.random() * 17) + 15;
                 }
 
-                amount = Math.round(amount * user.getBuff('fishAmount'));
+                amount = Math.round(amount * user.buff.get('fishAmount'));
 
                 user.fish.addCaught(type, amount);
                 user.inventory.add(type, amount);
