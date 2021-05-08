@@ -20,10 +20,7 @@ module.exports = class {
                 for (var arg in args) {
                     args[arg] = args[arg].toLowerCase();
                 }
-                console.log(args);
-                console.log(args.join(' '));
                 const pet = client.pets.get(args.join(' '));
-                console.log(pet);
                 if (!pet) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
