@@ -24,7 +24,7 @@ module.exports = class {
                         name: `${profile.user.username}'s stats`,
                         icon_url: profile.user.avatarURL()
                     },
-                    description: `Times begged: **\`${profile.beg.getCount(true)}\`**\nAmount Earned: **\`${Number.comma(profile.beg.getEarned())}\`**`,
+                    description: `Times begged: **\`${profile.beg().getCount(true)}\`**\nAmount Earned: **\`${Number.comma(profile.beg().getEarned())}\`**`,
                     timestamp: new Date(),
                     footer: {
                         text: `${profile.user.username}'s begging stats`
@@ -34,11 +34,11 @@ module.exports = class {
                 break;
             }
             default: {
-                if (profile.cooldown.get("beg", true, msg).response) return;
+                if (profile.cooldown().get("beg", true, msg).response) return;
 
                 const amount = Math.floor(Math.random() * 200) + 100;
-                profile.economy.add(amount, "beg");
-                profile.beg.addCount();
+                profile.economy().add(amount, "beg");
+                profile.beg().addCount();
                 profile.save();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username}'s Begging`,

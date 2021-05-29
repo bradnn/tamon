@@ -15,7 +15,7 @@ module.exports = class {
                 name: `${user.username}'s balance`,
                 icon_url: user.avatarURL()
             },
-            description: `🪙 ${profile.economy.get(true)} coins`,
+            description: `🪙 ${profile.economy().get(true)} coins`,
             timestamp: new Date(),
             color: client.colors.default
         }

@@ -39,5 +39,20 @@ module.exports.GIFs = {
         "https://i.pinimg.com/originals/90/2b/3a/902b3a693a1445d36886bcc6a20dbdb8.gif",
         "https://i.pinimg.com/originals/b3/4e/9a/b34e9ad3669ba1fa5245bcf6df83d381.gif",
         "https://i.pinimg.com/originals/23/dc/10/23dc10ae0d4d270d9b6d849740be6919.gif"
+    ],
+    kill: [
+        "https://data.whicdn.com/images/319479008/original.gif",
+        "https://i.pinimg.com/originals/1e/ff/96/1eff963ec69aab7668caf05141fed942.gif",
+        "https://i.pinimg.com/originals/ec/90/de/ec90de2a6705af91f87f792a4c072af8.gif",
+        "https://i.pinimg.com/originals/d1/2a/1d/d12a1d81b98a743258375aa758b7f6d9.gif"
+    ],
+    cry: [
+        "https://i.pinimg.com/originals/d2/29/27/d22927d8af8876f33a7fd206ed1cde4b.gif",
+        "https://i.pinimg.com/originals/18/89/52/18895242cf709d710f4adb1f4b19ba09.gif",
+        "https://i.pinimg.com/originals/af/91/63/af9163f236639a4510ae97ada095784a.gif",
+        "https://i.pinimg.com/originals/2b/c6/49/2bc6499d142990fd06570dcbd4e903ca.gif",
+        "https://i.pinimg.com/originals/40/73/6b/40736b738fe7584ce5afe61e78312d7a.gif",
+        "https://i.pinimg.com/originals/e2/94/ee/e294ee742bf4c2aafbf59643b9c35166.gif",
+        "https://i.pinimg.com/originals/e1/60/89/e16089e2f69c51dd9a7bfafb886eaac1.gif"
     ]
 }

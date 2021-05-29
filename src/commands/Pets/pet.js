@@ -34,7 +34,7 @@ module.exports = class {
                     }});
                     return;
                 }
-                const setActive = profile.setActivePet(pet);
+                const setActive = profile.pet().setActive(pet);
                 if (setActive == "NO_PET") {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,

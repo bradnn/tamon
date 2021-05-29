@@ -24,9 +24,9 @@ module.exports = class {
                         name: `${profile.user.username}'s stats`,
                         icon_url: profile.user.avatarURL()
                     },
-                    description: `Amount Sent: **\`${Number.comma(profile.pay.getPaySent())}\`**
-Amount Recieved: **\`${Number.comma(profile.pay.getPayRecieved())}\`**
-Amount Profited: **\`${Number.comma(profile.pay.getPayRecieved() - profile.pay.getPaySent())}\`**`,
+                    description: `Amount Sent: **\`${Number.comma(profile.pay().getPaySent())}\`**
+Amount Recieved: **\`${Number.comma(profile.pay().getPayRecieved())}\`**
+Amount Profited: **\`${Number.comma(profile.pay().getPayRecieved() - profile.pay().getPaySent())}\`**`,
                     timestamp: new Date(),
                     footer: {
                         text: `${profile.user.username}'s pay stats`
@@ -78,7 +78,7 @@ Amount Profited: **\`${Number.comma(profile.pay.getPayRecieved() - profile.pay.g
                     }});
                     break;
                 }
-                const canProfilePay = profile.pay.canPay(amount);
+                const canProfilePay = profile.pay().canPay(amount);
                 if (!canProfilePay.canPay) { 
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
@@ -93,7 +93,7 @@ Amount Profited: **\`${Number.comma(profile.pay.getPayRecieved() - profile.pay.g
                     break;
                 }
                 var profile2 = await User.get(user2);
-                const canProfile2Pay = profile2.pay.canPay(amount);
+                const canProfile2Pay = profile2.pay().canPay(amount);
                 if (!canProfile2Pay.canPay) { 
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
@@ -108,8 +108,8 @@ Amount Profited: **\`${Number.comma(profile.pay.getPayRecieved() - profile.pay.g
                     break;
                 }
 
-                profile2.economy.add(amount, "pay");
-                profile.economy.del(amount, "pay");
+                profile2.economy().add(amount, "pay");
+                profile.economy().del(amount, "pay");
                 profile2.save();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username}'s Payment`,

@@ -83,7 +83,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                         name: `${user.user.username}'s stats`,
                         icon_url: user.user.avatarURL()
                     },
-                    description: `Job: **\`${user.work.getJob()}\`**\nHours Worked: **\`${user.work.getCount()}\`**\nAmount Earned: **\`${Number.comma(user.work.getAmountEarned())} coins\`**`,
+                    description: `Job: **\`${user.work().getJob()}\`**\nHours Worked: **\`${user.work().getCount()}\`**\nAmount Earned: **\`${Number.comma(user.work().getAmountEarned())} coins\`**`,
                     timestamp: new Date(),
                     footer: {
                         text: `${user.user.username}'s work stats`
@@ -99,7 +99,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     }
                     const job = client.jobs.get(args.join(" "));
                     if (job) {
-                        if (user.work.wasFired(job)) {
+                        if (user.work().wasFired(job)) {
                             msg.channel.send({ embed: {
                                 title: `❌ Error`,
                                 description: `You were fired from this job within the last 24 Hours.`,
@@ -112,7 +112,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                             }});
                             break;
                         }
-                        if (!user.work.canApply(job)) {
+                        if (!user.work().canApply(job)) {
                             msg.channel.send({ embed: {
                                 title: `❌ Error`,
                                 description: `You don't meet the requirements for this job. Check \`${options.prefix}work view ${job.name}\`.`,
@@ -125,7 +125,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                             }});
                             break;
                         }
-                        user.work.setJob(job.name);
+                        user.work().setJob(job.name);
                         msg.channel.send({ embed: {
                             title: `${job.name} Application`,
                             description: `You were accepted as ${job.name}. Your salary is now ${Number.comma(job.salary)} coins.`,
@@ -151,7 +151,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     break;
                 }
 
-                if (user.work.getJob() === "None") {
+                if (user.work().getJob() === "None") {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You don't have a job. Apply for one with \`${options.prefix}work <Job Name>\``,
@@ -165,7 +165,7 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     break;
                 }
 
-                if (!user.work.canWork()) {
+                if (!user.work().canWork()) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You didn't meet the required hours yesterday. Apply for a job with \`${options.prefix}work <Job Name>\``,
@@ -179,20 +179,20 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     break;
                 }
 
-                if (user.cooldown.get("work", true, msg).response) return;
+                if (user.cooldown().get("work", true, msg).response) return;
 
-                const job = client.jobs.get(user.work.getJob());
+                const job = client.jobs.get(user.work().getJob());
 
                 const challengeTypes = Object.keys(Challenge);
                 const challengeType = challengeTypes[Math.floor(Math.random() * challengeTypes.length)];
 
                 const results = await Challenge[challengeType](msg, `${job.name} Work`, `${user.user.username}'s work`);
                 if (results.correct) {
-                    user.economy.add(user.work.getPay(), "work");
-                    user.work.addCount();
+                    user.economy().add(user.work().getPay(), "work");
+                    user.work().addCount();
                     msg.channel.send({ embed: {
                         title: `${job.name} Work`,
-                        description: job.getMessage().replace("%p", Number.comma(user.work.getPay()) + " coins"),
+                        description: job.getMessage().replace("%p", Number.comma(user.work().getPay()) + " coins"),
                         timestamp: Date.now(),
                         footer: {
                             text: `${user.user.username}'s work`,
@@ -202,8 +202,8 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                     }});
                     break;
                 }
-                const payout = Math.floor((user.work.getPay() / 100) * 50 + (Math.random() * 100));
-                user.economy.add(payout, "work");
+                const payout = Math.floor((user.work().getPay() / 100) * 50 + (Math.random() * 100));
+                user.economy().add(payout, "work");
                 switch (results.error) {
                     case "MISTYPE": {
                         msg.channel.send({ embed: {

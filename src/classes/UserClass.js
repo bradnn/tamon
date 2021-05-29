@@ -1,3 +1,10 @@
+/**
+ * @file UserClass for easy database manipulation
+ * @author sycles
+ * @version 1.1.1
+ * @since 1.1.1
+ */
+
 const EconomyClass = require('./User/Economy.js');
 const WorkClass = require('./User/Work.js');
 const BegClass = require('./User/Beg.js');
@@ -52,43 +59,122 @@ module.exports = class {
         this.id = user.id;
         this.user = user;
         this.model = model;
+    }
+    
+    economy() {
+        return new EconomyClass(this.model);
+    }
 
-        /** @type {EconomyClass} */
-        this.economy = new EconomyClass(model);
+    work() {
+        return new WorkClass(this.model, client);
+    }
+
+    beg() {
+        return new BegClass(this.model);
+    }
+
+    cooldown() {
+        return new CooldownClass(this.model, client, this.user);
+    }
+
+    gambling() {
+        return new GamblingClass(this.model);
+    }
+
+    inventory() {
+        return new InventoryClass(this.model, client);
+    }
+
+    shop() {
+        return new ShopClass(this.model);
+    }
+
+    fish() {
+        return new FishClass(this.model);
+    }
+
+    mine() {
+        return new MineClass(this.model);
+    }
+
+    pay() {
+        return new PayClass(this.model);
+    }
+
+    pet() {
+        return new PetClass(this.model);
+    }
+
+    buff() {
+        return new BuffClass(this.model);
+    }
+
+    get() {
+                /** @type {EconomyClass} */
+        this.economy = new EconomyClass(this.model);
 
         /** @type {WorkClass} */
-        this.work = new WorkClass(model, client);
+        this.work = new WorkClass(this.model, client);
 
         /** @type {BegClass} */
-        this.beg = new BegClass(model);
+        this.beg = new BegClass(this.model);
 
         /** @type {CooldownClass} */
-        this.cooldown = new CooldownClass(model, client, user);
+        this.cooldown = new CooldownClass(this.model, client, this.user);
 
         /** @type {GamblingClass} */
-        this.gambling = new GamblingClass(model);
+        this.gambling = new GamblingClass(this.model);
 
         /** @type {InventoryClass} */
-        this.inventory = new InventoryClass(model);
+        this.inventory = new InventoryClass(this.model, client);
 
         /** @type {ShopClass} */
-        this.shop = new ShopClass(model);
+        this.shop = new ShopClass(this.model);
 
         /** @type {FishClass} */
-        this.fish = new FishClass(model);
+        this.fish = new FishClass(this.model);
 
         /** @type {MineClass} */
-        this.mine = new MineClass(model);
+        this.mine = new MineClass(this.model);
 
         /** @type {PayClass} */
-        this.pay = new PayClass(model);
+        this.pay = new PayClass(this.model);
 
         /** @type {PetClass} */
-        this.pet = new PetClass(model);
+        this.pet = new PetClass(this.model);
 
         /** @type {BuffClass} */
-        this.buff = new BuffClass(model);
+        this.buff = new BuffClass(this.model);
+        return {
+            economy: new EconomyClass(this.model),
+            work: new WorkClass(this.model, client),
+            beg: new BegClass(this.model),
+            cooldown: new CooldownClass(this.model, client, this.user),
+            gambling: new GamblingClass(this.model),
+            inventory: new InventoryClass(this.model, client),
+            shop: new ShopClass(this.model),
+            fish: new FishClass(this.model),
+            mine: new MineClass(this.model),
+            pay: new PayClass(this.model),
+            pet: new PetClass(this.model),
+            buff: new BuffClass(this.model),
+        }
     }
+
+    // economy = new EconomyClass(this.model);
+    // work = new WorkClass(this.model, client);
+    // beg = new BegClass(this.model);
+    // cooldown = new CooldownClass(this.model, client, this.user);
+    // gambling = new GamblingClass(this.model);
+    // inventory = new InventoryClass(this.model, client);
+    // shop = new ShopClass(this.model);
+    // fish = new FishClass(this.model);
+    // mine = new MineClass(this.model);
+    // pay = new PayClass(this.model);
+    // pet = new PetClass(this.model);
+    // buff = new BuffClass(this.model);
+
+    // DATABASE MANIPULATION 
 
     /**
      * Save to the database.

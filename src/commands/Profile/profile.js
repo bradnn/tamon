@@ -19,8 +19,8 @@ module.exports = class {
             },
             fields: [
                 {
-                    name: `Inventory`,
-                    value: `${profile.inventory.getTotalCount()} items (Worth ${Number.comma(profile.inventory.getWorth())} coins)`
+                    name: `inventory()`,
+                    value: `${profile.inventory().getTotalCount()} items (Worth ${Number.comma(profile.inventory().getWorth())} coins)`
                 },
                 {
                     name: `Pets`,

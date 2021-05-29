@@ -17,7 +17,7 @@ var member;
 var client;
 
 cooldowns = {
-    work: 0, //3600000
+    work: 3600000, //3600000
     fish: 120000,
     mine: 180000,
     beg: 30000

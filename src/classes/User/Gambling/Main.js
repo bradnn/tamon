@@ -30,11 +30,13 @@ module.exports = class {
      */
     constructor(model) {
         user = model;
+    }
 
-        /** @type {RollClass} */
-        this.roll = new RollClass(model);
+    roll() {
+        return new RollClass(model);
+    }
 
-        /** @type {FlipClass} */
-        this.flip = new FlipClass(model);
+    flip() {
+        return new FlipClass(model);
     }
 }

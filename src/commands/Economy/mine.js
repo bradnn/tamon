@@ -25,7 +25,7 @@ module.exports = class {
                         name: `${user.user.username}'s stats`,
                         icon_url: user.user.avatarURL()
                     },
-                    description: `Times Mined: **\`${user.mine.getCount()}\`**`,
+                    description: `Times Mined: **\`${user.mine().getCount()}\`**`,
                     timestamp: new Date(),
                     footer: {
                         text: `${user.user.username}'s mining stats`
@@ -72,7 +72,7 @@ Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.
             }
             default: {
                 const pickaxeItem = client.items.get(`pickaxe`);
-                if (user.inventory.getCount(pickaxeItem) < 1) {
+                if (user.inventory().getCount(pickaxeItem) < 1) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You don't own a pickaxe! Do \`${options.prefix}shop\` to check the price.`,
@@ -86,7 +86,7 @@ Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.
                     return;
                 }
 
-                if (user.cooldown.get("mine", true, msg).response) return;
+                if (user.cooldown().get("mine", true, msg).response) return;
 
                 var amount;
                 var type;
@@ -107,11 +107,11 @@ Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.
                     amount = Math.floor(Math.random() * 17) + 15;
                 }
 
-                amount = Math.round(amount * user.buff.get('mineAmount'));
+                amount = Math.round(amount * user.buff().get('mineAmount'));
 
-                user.mine.addOreCount(type, amount);
-                user.inventory.add(type, amount);
-                user.mine.addCount();
+                user.mine().addOreCount(type, amount);
+                user.inventory().add(type, amount);
+                user.mine().addCount();
                 user.save();
                 msg.channel.send({ embed: {
                     title: `${user.user.username} Mining`,

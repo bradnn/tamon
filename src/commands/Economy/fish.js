@@ -25,7 +25,7 @@ module.exports = class {
                         name: `${user.user.username}'s stats`,
                         icon_url: user.user.avatarURL()
                     },
-                    description: `Times Fished: **\`${user.fish.getCount()}\`**`,
+                    description: `Times Fished: **\`${user.fish().getCount()}\`**`,
                     timestamp: new Date(),
                     footer: {
                         text: `${user.user.username}'s fishing stats`
@@ -58,7 +58,7 @@ module.exports = class {
 
                 for (var fish in Object.values(fishObj)) {
                     fish = Object.values(fishObj)[fish];
-                    fishString += `${fish.emoji} **${fish.name}**: **\`${Number.comma(user.fish.getCaught(fish))}\`**
+                    fishString += `${fish.emoji} **${fish.name}**: **\`${Number.comma(user.fish().getCaught(fish))}\`**
 Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.price.sell)} coins\n\n`;
                 }
 
@@ -75,7 +75,7 @@ Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.pric
             }
             default: {
                 const rodItem = client.items.get(`fishing rod`);
-                if (user.inventory.getCount(rodItem) < 1) {
+                if (user.inventory().getCount(rodItem) < 1) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You don't own a fishing rod! Do \`${options.prefix}shop\` to check the price.`,
@@ -89,7 +89,7 @@ Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.pric
                     return;
                 }
 
-                if (user.cooldown.get("fish", true, msg).response) return;
+                if (user.cooldown().get("fish", true, msg).response) return;
 
                 var amount;
                 var type;
@@ -119,11 +119,11 @@ Tier: ${String.capitalize(fish.tier)} **-** Sell Price: ${Number.comma(fish.pric
                     amount = Math.floor(Math.random() * 17) + 15;
                 }
 
-                amount = Math.round(amount * user.buff.get('fishAmount'));
+                amount = Math.round(amount * user.buff().get('fishAmount'));
 
-                user.fish.addCaught(type, amount);
-                user.inventory.add(type, amount);
-                user.fish.addCount();
+                user.fish().addCaught(type, amount);
+                user.inventory().add(type, amount);
+                user.fish().addCount();
                 user.save();
                 msg.channel.send({ embed: {
                     title: `${user.user.username} Fishing`,

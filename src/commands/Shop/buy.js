@@ -86,7 +86,7 @@ module.exports = class {
             }});
             return;
         }
-        if (item.maxAmount <= user.inventory.getCount(item)) {
+        if (item.maxAmount <= user.inventory().getCount(item)) {
             msg.channel.send({ embed: {
                 title: `❌ Error`,
                 description: `You can't buy anymore of this item.`,
@@ -99,7 +99,7 @@ module.exports = class {
             }});
             return;
         }
-        if (item.maxAmount < user.inventory.getCount(item) + amount) {
+        if (item.maxAmount < user.inventory().getCount(item) + amount) {
             msg.channel.send({ embed: {
                 title: `❌ Error`,
                 description: `Buying ${amount} of ${item.name} would exceed the limit of ${item.maxAmount}`,
@@ -112,9 +112,9 @@ module.exports = class {
             }});
             return;
         }
-        user.economy.remove(item.price.buy * amount, "buy");
-        user.shop.addBoughtCount(amount);
-        user.inventory.add(item, amount);
+        user.economy().remove(item.price.buy * amount, "buy");
+        user.shop().addBoughtCount(amount);
+        user.inventory().add(item, amount);
         user.save();
         msg.channel.send({ embed: {
             title: `${user.user.username} Purchase`,
