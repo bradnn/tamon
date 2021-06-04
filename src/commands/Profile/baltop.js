@@ -1,5 +1,4 @@
 const { Number } = require("../../modules/Number");
-const { User } = require("../../modules/User");
 const UserSchema = require("../../storage/UserSchema");
 
 module.exports = class {
