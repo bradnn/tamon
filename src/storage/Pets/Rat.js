@@ -7,10 +7,10 @@ module.exports = class {
     }
 
     equipPet(user) {
-        user.buff.add('mineAmount', 0.10);
+        user.buff().add('mineAmount', 0.10);
     }
 
     unequipPet(user) {
-        user.buff.add('mineAmount', 0.10);
+        user.buff().add('mineAmount', 0.10);
     }
 }

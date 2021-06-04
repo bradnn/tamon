@@ -55,7 +55,7 @@ module.exports = class {
 
                 for (var ore in Object.values(oreObj)) {
                     ore = Object.values(oreObj)[ore];
-                    oreString += `${ore.emoji} **${ore.name}**: **\`${Number.comma(user.mine.getOreCount(ore))}\`**
+                    oreString += `${ore.emoji} **${ore.name}**: **\`${Number.comma(user.mine().getOreCount(ore))}\`**
 Tier: ${String.capitalize(ore.tier)} **-** Sell Price: ${Number.comma(ore.price.sell)} coins\n\n`;
                 }
 

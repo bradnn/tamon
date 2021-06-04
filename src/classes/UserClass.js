@@ -61,50 +61,98 @@ module.exports = class {
         this.model = model;
     }
     
+    /**
+     * 
+     * @returns {EconomyClass}
+     */
     economy() {
         return new EconomyClass(this.model);
     }
 
+    /**
+     * 
+     * @returns {WorkClass}
+     */
     work() {
         return new WorkClass(this.model, client);
     }
 
+    /**
+     * 
+     * @returns {BegClass}
+     */
     beg() {
         return new BegClass(this.model);
     }
 
+    /**
+     * 
+     * @returns {CooldownClass}
+     */
     cooldown() {
         return new CooldownClass(this.model, client, this.user);
     }
 
+    /**
+     * 
+     * @returns {GamblingClass}
+     */
     gambling() {
         return new GamblingClass(this.model);
     }
 
+    /**
+     * 
+     * @returns {InventoryClass}
+     */
     inventory() {
         return new InventoryClass(this.model, client);
     }
 
+    /**
+     * 
+     * @returns {ShopClass}
+     */
     shop() {
         return new ShopClass(this.model);
     }
 
+    /**
+     * 
+     * @returns {FishClass}
+     */
     fish() {
         return new FishClass(this.model);
     }
 
+    /**
+     * 
+     * @returns {MineClass}
+     */
     mine() {
         return new MineClass(this.model);
     }
 
+    /**
+     * 
+     * @returns {PayClass}
+     */
     pay() {
         return new PayClass(this.model);
     }
 
+    /**
+     * 
+     * @returns {PetClass}
+     */
     pet() {
-        return new PetClass(this.model);
+        return new PetClass(this.model, client);
     }
 
+    /**
+     * 
+     * @returns {BuffClass}
+     */
     buff() {
         return new BuffClass(this.model);
     }
@@ -141,7 +189,7 @@ module.exports = class {
         this.pay = new PayClass(this.model);
 
         /** @type {PetClass} */
-        this.pet = new PetClass(this.model);
+        this.pet = new PetClass(this.model, client);
 
         /** @type {BuffClass} */
         this.buff = new BuffClass(this.model);

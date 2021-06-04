@@ -31,7 +31,7 @@ module.exports = class {
     }
 
     isUnlocked(user) { // Checks if the user can apply for this job
-        const workCount = user.work.getWorkCount();
+        const workCount = user.work().getCount();
         if (workCount >= this.unlockHours) {
             return true;
         }

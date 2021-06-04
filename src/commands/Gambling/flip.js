@@ -20,12 +20,12 @@ module.exports = class {
                     profile = await User.get(user);
                 }
 
-                const WIN_AMOUNT = profile.gambling().flip.getAmountWon();
-                const LOSS_AMOUNT = profile.gambling().flip.getAmountLost();
+                const WIN_AMOUNT = profile.gambling().flip().getAmountWon();
+                const LOSS_AMOUNT = profile.gambling().flip().getAmountLost();
                 const TOTAL_PROFIT = WIN_AMOUNT - LOSS_AMOUNT;
 
-                const WINS = profile.gambling().flip.getWins();
-                const LOSSES = profile.gambling().flip.getLosses();
+                const WINS = profile.gambling().flip().getWins();
+                const LOSSES = profile.gambling().flip().getLosses();
                 const TOTAL_FLIPS = WINS + LOSSES;
 
                 msg.channel.send({ embed: { 
@@ -37,8 +37,8 @@ module.exports = class {
 Flips won: **\`${Number.comma(WINS)}\`**
 Flips lost: **\`${Number.comma(LOSSES)}\`**
 
-Largest win: **\`${Number.comma(profile.gambling().flip.getLargestWin())}\`**
-Largest loss: **\`${Number.comma(profile.gambling().flip.getLargestLoss())}\`**
+Largest win: **\`${Number.comma(profile.gambling().flip().getLargestWin())}\`**
+Largest loss: **\`${Number.comma(profile.gambling().flip().getLargestLoss())}\`**
 
 Amount won: **\`${Number.comma(WIN_AMOUNT)} coins\`**
 Amount lost: **\`${Number.comma(LOSS_AMOUNT)} coins\`**
@@ -83,7 +83,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
 
-                if (amount > profile.economy.get()) {
+                if (amount > profile.economy().get()) {
                     msg.channel.send({ embed: {
                         title: `❌ Error`,
                         description: `You need to have ${Number.comma(amount)} in your balance to gamble it.`,
@@ -105,7 +105,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                 const result = results[Math.floor(Math.random() * results.length)];
                 if(choice !== result) {
                     profile.economy().remove(amount, "flip");
-                    profile.gambling().flip.addLoss();
+                    profile.gambling().flip().addLoss();
                     msg.channel.send({ embed: {
                         title: `${profile.user.username} Flip`,
                         description: `You flipped ${result} and lost ${Number.comma(amount)} coins.`,
@@ -119,7 +119,7 @@ Total profit: **\`${Number.comma(TOTAL_PROFIT)} coins\`**`,
                     break;
                 }
                 profile.economy().add(amount, "flip");
-                profile.gambling().flip.addWins();
+                profile.gambling().flip().addWins();
                 msg.channel.send({ embed: {
                     title: `${profile.user.username} Flip`,
                     description: `You flipped ${result} and won ${Number.comma(amount)} coins!`,

@@ -190,16 +190,31 @@ Salary: **\`${Number.comma(job.salary)} coins\`**`,
                 if (results.correct) {
                     user.economy().add(user.work().getPay(), "work");
                     user.work().addCount();
-                    msg.channel.send({ embed: {
+                    var embed = {
                         title: `${job.name} Work`,
                         description: job.getMessage().replace("%p", Number.comma(user.work().getPay()) + " coins"),
+                        fields: [],
                         timestamp: Date.now(),
                         footer: {
                             text: `${user.user.username}'s work`,
                             icon_url: user.user.avatarURL()
                         },
                         color: client.colors.success
-                    }});
+                    }
+
+                    var possiblePets = ['rat', 'cat'];
+                    var getChance = Math.random() * 100;
+
+                    if (getChance > 99.5) {
+                        var pet = possiblePets[Math.floor(Math.random() * possiblePets.length)];
+                        user.pet().add(pet);
+                        embed.fields[0] = {
+                            name: `🎉 You found a pet!`,
+                            value: `+1 ${String.capitalize(pet)} Pet`
+                        }
+                    }
+
+                    msg.channel.send({ embed: embed});
                     break;
                 }
                 const payout = Math.floor((user.work().getPay() / 100) * 50 + (Math.random() * 100));

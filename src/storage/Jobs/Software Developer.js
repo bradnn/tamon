@@ -10,9 +10,9 @@ module.exports = class {
     constructor() {
         this.name = `Software Developer`;
         this.description = `Do software development for companies that hire you`; // Description done by sycles#3388
-        this.hourRequirement = 0;
+        this.hourRequirement = 1;
         this.salary = 25000;
-        this.unlockHours = 0;
+        this.unlockHours = 25;
     }
     
     getMessage(correct = true) {
@@ -21,7 +21,7 @@ module.exports = class {
     }
 
     isUnlocked(user) { // Checks if the user can apply for this job
-        const workCount = user.work.getWorkCount();
+        const workCount = user.work().getCount();
         if (workCount >= this.unlockHours) {
             return true;
         }

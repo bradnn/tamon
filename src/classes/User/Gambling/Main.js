@@ -33,10 +33,10 @@ module.exports = class {
     }
 
     roll() {
-        return new RollClass(model);
+        return new RollClass(user);
     }
 
     flip() {
-        return new FlipClass(model);
+        return new FlipClass(user);
     }
 }

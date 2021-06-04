@@ -19,12 +19,12 @@ module.exports = class {
             },
             fields: [
                 {
-                    name: `inventory()`,
+                    name: `Inventory`,
                     value: `${profile.inventory().getTotalCount()} items (Worth ${Number.comma(profile.inventory().getWorth())} coins)`
                 },
                 {
                     name: `Pets`,
-                    value: `Active Pet: **\`${profile.getActivePet()}\`**\nPet Count: **\`${Number.comma(Object.keys(profile.model.profile.pets.storage).length)}\`**`
+                    value: `Active Pet: **\`${profile.pet().getActive()}\`**\nPet Count: **\`${Number.comma(Object.keys(profile.model.profile.pets.storage).length)}\`**`
                 }
             ],
             timestamp: new Date(),
