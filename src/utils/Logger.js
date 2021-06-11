@@ -34,6 +34,9 @@ exports.log = (content, type = "log") => {
     case 'command': {
       return console.log(`${timestamp} ${chalk.magentaBright(type.toUpperCase())} ${content} `);
     }
+    case 'economy': {
+      return console.log(`${timestamp} ${chalk.green(type.toUpperCase())} ${content} `);
+    }
     case 'job': {
       return console.log(`${timestamp} ${chalk.blue(type.toUpperCase())} ${content} `);
     }
@@ -64,6 +67,8 @@ exports.load = (...args) => this.log(...args, 'load');
 exports.event = (...args) => this.log(...args, 'event');
 
 exports.command = (...args) => this.log(...args, 'command');
+
+exports.economy = (...args) => this.log(...args, 'economy');
 
 exports.job = (...args) => this.log(...args, 'job');
 

@@ -42,6 +42,7 @@ class UserEconomyManager extends UserStructure.User {
             return null;
         }
         this.model.profile.pocket.amount += amount;
+        this.client.logger.economy(`Added ${amount} coins to ${this.user.username} (${this.user.id}), new balance: $${this.model.profile.pocket.amount}`);
         return this.model.profile.pocket.amount;
     }
 }
