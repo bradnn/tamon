@@ -1,7 +1,6 @@
 require('dotenv').config();
 
-const Tamon = require("./base/Tamon"),
+const Tamon = require("./client/Tamon"),
       client = new Tamon();
 
 client.init();
-
