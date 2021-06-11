@@ -7,15 +7,17 @@
 
 const { User } = require("discord.js");
 const { Document } = require("mongoose");
-const UserStructure = require("../../structures/User");
+const UserStructure = require("../../models/User");
 
 const Tamon = require("../../client/Tamon");
 const UserEconomyManager = require("./UserEconomyManager");
+const UserWorkManager = require("./UserWorkManager");
 const UserBegManager = require("./UserBegManager");
 
 /**
  * @typedef {object} Tamon
  * @typedef {object} UserEconomyManager
+ * @typedef {object} UserWorkManager
  * @typedef {object} UserBegManager
  */
 
@@ -41,6 +43,14 @@ class UserManager extends UserStructure.User {
      */
     get economy() {
         return new UserEconomyManager(this);
+    }
+
+    /**
+     * The user work manager
+     * @type {UserWorkManager}
+     */
+    get work() {
+        return new UserWorkManager(this);
     }
 
     /**

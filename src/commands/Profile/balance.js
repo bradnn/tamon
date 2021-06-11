@@ -1,4 +1,4 @@
-const Command = require("../../structures/Command");
+const Command = require("../../models/Command");
 const { comma } = require("../../utils/Number");
 const { Message } = require("discord.js");
 

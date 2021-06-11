@@ -1,4 +1,4 @@
-const Event = require("../../structures/Event");
+const Event = require("../../models/Event");
 
 module.exports = class extends Event {
     constructor(client) {
@@ -14,7 +14,7 @@ module.exports = class extends Event {
         if (msg.content.match(mentionRegex)) msg.channel.send(`My prefix is \`${guild.getPrefix()}\`.`);
 
         const mentionRegexPrefix = RegExp(`^<@!?${this.client.user.id}> `);
-        const prefix = msg.content.match(mentionRegexPrefix) ? msg.content.match(mentionRegexPrefix)[0] : "?";
+        const prefix = msg.content.match(mentionRegexPrefix) ? msg.content.match(mentionRegexPrefix)[0] : "!";
         if (!msg.content.startsWith(prefix)) return;
         if(prefix.match(mentionRegexPrefix)) {
             msg.mentions.splice(0,1);

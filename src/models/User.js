@@ -14,7 +14,7 @@ class User {
     }
 }
 
-const UserSchema = Schema({
+const Users = Schema({
     id: String,
     profile: {
         pocket: {
@@ -28,6 +28,16 @@ const UserSchema = Schema({
             }
         },
         commands: {
+            work: {
+                job: {
+                    type: String,
+                    default: "Voice Actor"
+                },
+                count: {
+                    type: Number,
+                    default: 0
+                }
+            },
             beg: {
                 count: {
                     type: Number,
@@ -50,5 +60,5 @@ const UserSchema = Schema({
 
 module.exports = {
     User,
-    UserSchema: model("UserSchema", UserSchema)
+    UserSchema: model("users", Users)
 }

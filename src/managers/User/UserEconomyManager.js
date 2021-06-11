@@ -5,7 +5,7 @@
  * @since 2.0.0
  */
 
-const UserStructure = require("../../structures/User");
+const UserStructure = require("../../models/User");
 const UserManager = require("./UserManager");
 
 /**

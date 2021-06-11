@@ -26,7 +26,7 @@ class Command {
     }
 
     isAdmin({ id }) {
-        const adminIDs = [`263789620007927813`];
+        const adminIDs = this.client.adminIDs;
         if (adminIDs.includes(id)) {
             return true;
         }
