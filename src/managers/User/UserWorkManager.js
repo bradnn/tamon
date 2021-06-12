@@ -1,10 +1,3 @@
-/**
- * @file User work manager
- * @author bradnn
- * @version 2.0.2
- * @since 2.0.1
- */
-
 const UserStructure = require("../../models/User");
 const UserManager = require("./UserManager");
 

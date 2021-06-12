@@ -1,10 +1,3 @@
-/**
- * @file Main user manager
- * @author bradnn
- * @version 2.0.0
- * @since 2.0.0
- */
-
 const { User } = require("discord.js");
 const { Document } = require("mongoose");
 const UserStructure = require("../../models/User");

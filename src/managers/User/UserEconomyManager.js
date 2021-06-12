@@ -1,10 +1,3 @@
-/**
- * @file User economy manager
- * @author bradnn
- * @version 2.0.2
- * @since 2.0.0
- */
-
 const UserStructure = require("../../models/User");
 const UserManager = require("./UserManager");
 
