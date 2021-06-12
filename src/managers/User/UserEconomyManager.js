@@ -29,6 +29,10 @@ class UserEconomyManager extends UserStructure.User {
         return this.model.profile.pocket.amount;
     }
 
+    get pocketMax() {
+        return this.model.profile.pocket.max;
+    }
+
     /**
      * 
      * @param {number} amount 

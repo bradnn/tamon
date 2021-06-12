@@ -33,6 +33,15 @@ class Command {
         return false;
     }
 
+    async canEarn(user, amount = 0) {
+        const User = await this.client.getMember(user);
+        const POCKET_MAX = User.economy.pocketMax;
+        if (User.economy.balance + amount > POCKET_MAX) {
+            return false;
+        }
+        return true;
+    }
+
     async getCooldown(user, set = true, msg) {
         const User = await this.client.getMember(user);
 

@@ -27,13 +27,35 @@ const Users = Schema({
                 default: 5000000
             }
         },
+        bank: {
+            amount: {
+                type: Number,
+                default: 0
+            },
+            max: {
+                type: Number,
+                default: 5000000
+            }
+        },
         commands: {
             work: {
                 job: {
                     type: String,
                     default: "Voice Actor"
                 },
+                earned: {
+                    type: Number,
+                    default: 0
+                },
                 count: {
+                    type: Number,
+                    default: 0
+                },
+                successes: {
+                    type: Number,
+                    default: 0
+                },
+                fails: {
                     type: Number,
                     default: 0
                 }

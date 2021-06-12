@@ -39,9 +39,31 @@ class UserWorkManager extends UserStructure.User {
         return this.model.profile.commands.work.count;
     }
 
-    addCount(amount = 1) {
+    get successes() {
+        return this.model.profile.commands.work.successes;
+    }
+    
+    get fails() {
+        return this.model.profile.commands.work.fails;
+    }
+
+    addCount(successful = true, amount = 1) {
+        if (successful) {
+            this.model.profile.commands.work.successes += amount;
+        } else {
+            this.model.profile.commands.work.fails += amount;
+        }
         this.model.profile.commands.work.count += amount;
         return this.model.profile.commands.work.count;
+    }
+
+    get earned() {
+        return this.model.profile.commands.work.earned;
+    }
+
+    addEarned(amount = 1) {
+        this.model.profile.commands.work.earned += amount;
+        return this.model.profile.commands.work.earned;
     }
 }
 
