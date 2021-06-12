@@ -1,7 +1,7 @@
 /**
  * @file User economy manager
  * @author bradnn
- * @version 2.0.0
+ * @version 2.0.2
  * @since 2.0.0
  */
 

@@ -1,7 +1,7 @@
 /**
  * @file User work manager
  * @author bradnn
- * @version 2.0.1
+ * @version 2.0.2
  * @since 2.0.1
  */
 
