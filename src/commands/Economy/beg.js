@@ -1,59 +1,79 @@
-const { Number } = require("../../modules/Number");
-const { User } = require("../../modules/User");
+const { Message } = require("discord.js");
+const Command = require("../../models/Command");
+const { comma } = require("../../utils/Number");
 
-module.exports = class {
-    constructor() {
-        this.cmd = 'beg',
-        this.aliases = ['plsgivemoney', 'needmoners', 'GIBMONERS']
+
+module.exports = class extends Command {
+    constructor(client) {
+        super (client, {
+            name: "Beg",
+            description: "Beg for money on the streets",
+            category: "Economy",
+            cooldown: 30000,
+            aliases: ["plsgivemoney", "needmoners", "GIBMONERS"],
+            ownerOnly: false,
+            dirname: __filename
+        });
     }
 
-    async run(client, msg, args, options) {
-        var profile = await User.get(msg.author);
-
-
+    /**
+     * Execute the commmand.
+     * 
+     * @param {Message} msg Discord message object
+     * @param {Array} args Array of arguments
+     * @param {object} data Extra data provided by the message event
+     * @returns {undefined}
+     */
+    async run (msg, args, data) {
+        var userData = await this.client.getMember(msg.author);
+        
         switch (args[0]?.toLowerCase()) {
-            case "info":
+            case "view":
             case "stats":
-            case "view": {
+            case "info": {
                 let user = msg.mentions.users.first() || msg.guild.members.cache.get(args[1]) || msg.author;
                 if (user) {
-                    profile = await User.get(user);
+                    userData = await this.client.getMember(user);
                 }
-                msg.channel.send({ embed: { 
-                    author: { 
-                        name: `${profile.user.username}'s stats`,
-                        icon_url: profile.user.avatarURL()
-                    },
-                    description: `Times begged: **\`${profile.beg().getCount(true)}\`**\nAmount Earned: **\`${Number.comma(profile.beg().getEarned())}\`**`,
-                    timestamp: new Date(),
-                    footer: {
-                        text: `${profile.user.username}'s begging stats`
-                    },
-                    color: client.colors.default
-                }})
+                msg.channel.send({
+                    embed: {
+                        author: {
+                            name: `${userData.user.username}`,
+                            icon_url: userData.user.avatarURL()
+                        },
+                        description: `Times begged: **\`${comma(userData.beg.count)}\`**\nAmount Earned: **\`${comma(userData.beg.earned)}\`**`,
+                        timestamp: new Date(),
+                        footer: {
+                            text: `${userData.user.username}'s begging stats`
+                        },
+                        color: this.client.colors.default
+                    }
+                })
                 break;
             }
             default: {
-                if (profile.cooldown().get("beg", true, msg).response) return;
+                if((await this.getCooldown(msg.author, true, msg)).response) return;
 
                 const amount = Math.floor(Math.random() * 200) + 100;
-                profile.economy().add(amount, "beg");
-                profile.beg().addCount();
-                profile.save();
-                msg.channel.send({ embed: {
-                    title: `${profile.user.username}'s Begging`,
-                    description: `You begged for money and got ${Number.comma(amount)} coins.`,
-                    timestamp: new Date(),
-                    footer: {
-                        text: `${profile.user.username}'s beg`,
-                        icon_url: profile.user.avatarURL()
-                    },
-                    color: client.colors.success
-                }});
+                userData.economy.addPocket(amount);
+                userData.beg.addEarned(amount);
+                userData.beg.addCount();
+                userData.save();
+                msg.channel.send({
+                    embed: {
+                        title: `${userData.user.username}'s Begging`,
+                        description: `You begged for money and got ${comma(amount)} coins.`,
+                        timestamp: new Date(),
+                        footer: {
+                            text: `${userData.user.username}'s beg`,
+                            icon_url: userData.user.avatarURL()
+                        },
+                        color: this.client.colors.success
+                    }
+                });
                 break;
             }
         }
-
         return;
     }
 }

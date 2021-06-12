@@ -1,0 +1,47 @@
+const UserStructure = require("../../models/User");
+const UserManager = require("./UserManager");
+
+/**
+ * User economy manager
+ * @extends {UserStructure.User}
+ */
+class UserEconomyManager extends UserStructure.User {
+    /**
+     * User economy manager
+     * @param {UserManager} User The main user manager
+     */
+    constructor(User) {
+        super(User);
+    }
+
+    /**
+     * The user's balance
+     * @type {number}
+     */
+    get balance() {
+        return this.model.profile.pocket.amount;
+    }
+
+    get pocketMax() {
+        return this.model.profile.pocket.max;
+    }
+
+    /**
+     * 
+     * @param {number} amount 
+     * @returns {?number} Users new balance
+     */
+    addPocket(amount = 1) {
+        if (typeof amount != Number) {
+            amount = parseInt(amount);
+        }
+        if (isNaN(amount)) {
+            return null;
+        }
+        this.model.profile.pocket.amount += amount;
+        this.client.logger.economy(`Added ${amount} coins to ${this.user.username} (${this.user.id}), new balance: $${this.model.profile.pocket.amount}`);
+        return this.model.profile.pocket.amount;
+    }
+}
+
+module.exports = UserEconomyManager
