@@ -33,7 +33,7 @@ module.exports = class extends Command {
                     name: `${user.username}'s balance`,
                     icon_url: user.avatarURL()
                 },
-                description: `🪙 ${comma(userData.economy.balance)} coins`,
+                description: `Pocket: **🪙 ${comma(userData.economy.balance)}**\nBank: **🪙 ${comma(userData.economy.bank)}**`,
                 timestamp: new Date(),
                 color: this.client.colors.default
             }

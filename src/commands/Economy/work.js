@@ -47,7 +47,6 @@ module.exports = class extends Command {
                 break;
             }
             default: {
-
                 if(!await this.canEarn(msg.author, userData.work.pay)) {
                     msg.channel.send({ embed: {
                         title: `${msg.author.username}'s Pocket`,
