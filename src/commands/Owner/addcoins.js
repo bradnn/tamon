@@ -4,11 +4,11 @@ const { Message } = require("discord.js");
 module.exports = class extends Command {
     constructor(client) {
         super (client, {
-            name: "Reload",
-            description: "Test Command",
+            name: "addcoins",
+            description: "Add coins to a user",
             category: "Owner",
             cooldown: 0,
-            aliases: ["ReloadCMD"],
+            aliases: ["addcoin"],
             ownerOnly: true,
             dirname: __filename
         });
@@ -24,19 +24,17 @@ module.exports = class extends Command {
      */
     async run (msg, args, data) {
         if (this.isAdmin(msg.author)) {
-            const command = args[0]?.toLowerCase();
-            const cmd = this.client.commands.get(command) || this.client.commands.get(this.client.aliases.get(command));
-            if(!cmd){
-                msg.channel.send(`Couldn't find ${command}`);
+            const amount = parseInt(args[0]);
+            if (isNaN(amount)) {
+                msg.channel.send(`Amount is not a valid number.`);
                 return;
             }
-            console.log(cmd.command.dirname)
-            const unload = await this.client.unloadCommand(cmd.command.dirname);
-            if (unload) {
-                console.log(unload);
-            }
-            await this.client.loadCommand(cmd.command.dirname);
-            msg.channel.send(`reloaded`);
+            let user = msg.mentions.users.first() || msg.guild.members.cache.get(args[1]) || msg.author;
+            const userData = await this.client.getMember(user);
+            userData.economy.addPocket(amount);
+            userData.save();
+            msg.channel.send(`Added ${amount} to ${user.username}'s pocket.`);
+            return;
         }
     }
 }

@@ -80,7 +80,10 @@ const Users = Schema({
     }
 });
 
+
+const UserSchema = model("users", Users);
+
 module.exports = {
     User,
-    UserSchema: model("users", Users)
+    UserSchema
 }

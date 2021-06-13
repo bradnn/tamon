@@ -20,8 +20,7 @@ module.exports = class extends Event {
             msg.mentions.splice(0,1);
         }
 
-
-        const data = {};
+        var data = {};
 
         const [cmd, ...args] = msg.content.slice(prefix.length).trim().split(/ +/g);
         const command = this.client.commands.get(cmd.toLowerCase()) || this.client.commands.get(this.client.aliases.get(cmd.toLowerCase()));

@@ -16,7 +16,8 @@ class Tamon extends Client {
 
         this.config = { // Config data
             token: process.env.TOKEN,
-            mongo_uri: process.env.MONGO_URI
+            mongo_uri: process.env.MONGO_URI,
+            port: 4242
         };
         this.colors = { // Colors used throughout the bot
             default: `#4361ee`,
@@ -264,6 +265,32 @@ class Tamon extends Client {
      */
     async getMember(user) {
         const memberID = user.id;
+        if (this.cache.members.get(memberID)) {
+            return this.cache.members.get(memberID);
+        } else {
+            let memberData = await this.memberStructure.findOne({ id: memberID });
+            if (!memberData) {
+                memberData = await this.memberStructure.create({ id: memberID });
+            }
+            await memberData.save();
+            const memberClass = new User(this, user, memberData);
+            this.cache.members.set(memberID, memberClass);
+            return memberClass;
+        }
+    }
+
+    /**
+     * 
+     * @param {User} user Discord user 
+     * @returns {UserManager}
+     */
+    async getMemberByID(memberID) {
+        var user;
+        try {
+            user = await this.users.fetch(memberID);
+        } catch (e) {
+            return;
+        }
         if (this.cache.members.get(memberID)) {
             return this.cache.members.get(memberID);
         } else {

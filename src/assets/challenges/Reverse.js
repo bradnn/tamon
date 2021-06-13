@@ -12,9 +12,19 @@ module.exports = class extends Challenge {
                 "Stomach",
                 "Camera",
                 "Dangerous",
-                "Democratic",
+                "Filter",
                 "Address",
-                "World"
+                "World",
+                "Expand",
+                "Notice",
+                "Survey",
+                "Mouse",
+                "Thrust",
+                "Command",
+                "Stubborn",
+                "Stimulation",
+                "Host",
+                "Taste"
             ],
             prompt: `The following word is reversed, reveal the original word to earn some coins:\n**\`%w%\`**`
         });
