@@ -9,6 +9,8 @@ class User {
 
     async save() {
         this.model.markModified('profile.commands.cooldowns');
+        this.model.markModified('profile.inventory.storage');
+        this.model.markModified('profile.inventory.meta.uses');
         await this.model.save();
         return;
     }
@@ -74,6 +76,18 @@ const Users = Schema({
                 type: Object,
                 default: {
                     work: 0
+                }
+            }
+        },
+        inventory: {
+            storage: {
+                type: Object,
+                default: {}
+            },
+            meta: {
+                uses: {
+                    type: Object,
+                    default: {}
                 }
             }
         }

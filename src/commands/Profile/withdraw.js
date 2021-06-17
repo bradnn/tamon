@@ -5,11 +5,11 @@ const { comma } = require("../../utils/Number");
 module.exports = class extends Command {
     constructor(client) {
         super(client, {
-            name: "Deposit",
-            description: "Deposit money to your bank",
+            name: "Withdraw",
+            description: "Withdraw money from your bank",
             category: "Profile",
             cooldown: 0,
-            aliases: ["dep"],
+            aliases: ["getmoneyfromdabank"],
             ownerOnly: false,
             dirname: __filename
         });
@@ -30,7 +30,7 @@ module.exports = class extends Command {
             msg.channel.send({
                 embed: {
                     title: `${userData.user.username}'s Bank`,
-                    description: `You didn't supply a valid amount to deposit`,
+                    description: `You didn't supply a valid amount to withdraw`,
                     timestamp: Date.now(),
                     footer: {
                         text: `${userData.user.username}'s bank`,
@@ -42,11 +42,11 @@ module.exports = class extends Command {
             return;
         }
         amount = parseInt(amount);
-        if (amount > userData.economy.balance) { // If they don't have enough money
+        if (amount > userData.economy.bank) { // If they don't have enough money
             msg.channel.send({
                 embed: {
                     title: `${userData.user.username}'s Bank`,
-                    description: `You don't have ${comma(amount)} coins to deposit`,
+                    description: `You don't have ${comma(amount)} coins to withdraw`,
                     timestamp: Date.now(),
                     footer: {
                         text: `${userData.user.username}'s bank`,
@@ -58,11 +58,11 @@ module.exports = class extends Command {
             return;
         }
 
-        if (userData.economy.bank + amount > userData.economy.bankMax) { // If this would exceed the bank cap
+        if (userData.economy.balance + amount > userData.economy.pocketMax) { // If this would exceed the bank cap
             msg.channel.send({
                 embed: {
                     title: `${userData.user.username}'s Bank`,
-                    description: `Depositing ${comma(amount)} coins would exceed the max of ${comma(userData.economy.bankMax)}`,
+                    description: `Withdrawing ${comma(amount)} coins would exceed the max of ${comma(userData.economy.pocketMax)}`,
                     timestamp: Date.now(),
                     footer: {
                         text: `${userData.user.username}'s bank`,
@@ -74,13 +74,13 @@ module.exports = class extends Command {
             return;
         }
 
-        userData.economy.delPocket(amount);
-        userData.economy.addBank(amount);
+        userData.economy.addPocket(amount);
+        userData.economy.delBank(amount);
         userData.save();
         msg.channel.send({
             embed: {
                 title: `${userData.user.username}'s Bank`,
-                description: `You have deposited **${comma(amount)} coins** and now have **${comma(userData.economy.bank)} coins** in your bank`,
+                description: `You have withdrawn **${comma(amount)} coins** and now have **${comma(userData.economy.balance)} coins** in your pocket`,
                 timestamp: Date.now(),
                 footer: {
                     text: `${userData.user.username}'s bank`,

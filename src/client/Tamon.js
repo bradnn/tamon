@@ -36,6 +36,9 @@ class Tamon extends Client {
         this.aliases = new Collection(); // Command alias collection
         this.challenges = new Collection(); // Challenge collection
         this.jobs = new Collection(); // Job collection
+        this.items = {};
+        this.items.items = new Collection(); // Item collection
+        this.items.aliases = new Collection(); // Item alias collection
         this.cache = {}; // Creates a cache of data from the database
         this.cache.members = new Collection(); // Creates a cache of member data
     }
@@ -46,6 +49,7 @@ class Tamon extends Client {
     init() {
         this.loadJobs();
         this.loadChallenges();
+        this.loadItems();
         this.loadCommands();
         this.loadEvents();
 
@@ -161,6 +165,54 @@ class Tamon extends Client {
             return false;
         } catch (e) {
             return `Couldn't unload command at ${filePath}: ${e}`;
+        }
+    }
+
+    loadItems() {
+        glob (`${process.cwd()}/src/assets/items/**/*.js`).then(items => {
+            for (const itemFile of items) {
+                const error = this.loadItem(itemFile);
+                if (error) {
+                    this.logger.error(error);
+                }
+            }
+        });
+    }
+
+    loadItem(filePath) {
+        try {
+            const item = new (require(filePath))(this);
+            this.logger.item(`Loading Item: ${item.item.name}`);
+            this.items.items.set(item.item.name.toLowerCase(), item);
+            item.item.aliases.forEach((alias) => {
+                this.items.aliases.set(alias.toLowerCase(), item.item.name.toLowerCase());
+            });
+            return false;
+        } catch (e) {
+            return `Couldn't load item at ${filePath}: ${e}`;
+        }
+    }
+
+    async unloadItem(filePath) {
+        try {
+            const item = new (require(filePath))(this);
+            let it;
+            if (this.items.items.has(item.item.name.toLowerCase())) {
+                it = hits.items.items.get(item.item.name.toLowerCase());
+            } else if (this.items.aliases.has(item.item.name.toLowerCase())) {
+                it = this.items.aliases.get(item.item.name.toLowerCase());
+            }
+            if (!it) {
+                return `The item \`${item.item.name}\` isn't loaded`;
+            }
+            delete require.cache[require.resolve(filePath)];
+            this.items.items.delete(it.item.name.toLowerCase());
+            it.item.aliases.forEach((alias) => {
+                this.items.aliases.delete(alias.toLowerCase());
+            });
+            return false;
+        } catch (e) {
+            return `Couldn't unload item at ${filePath}: ${e}`;
         }
     }
 
